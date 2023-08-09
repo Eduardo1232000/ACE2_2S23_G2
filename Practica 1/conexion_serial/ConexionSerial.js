@@ -22,8 +22,12 @@ parser.on("open", () => {
 
 // Evento de recepción de datos
 parser.on("data", (data) => {
+  console.log(data);
+  // Parsear datos json
+  data = JSON.parse(data);
+
   // Insertar datos en base de datos
-  connection.query(`INSERT INTO prueba VALUES (?);`, [data],(error, results) => {
+  connection.query(`INSERT INTO prueba VALUES (?,?,?,?,?,?);`, [data.temperatura,data.velocidad,data.humedadR,data.humedadA,data.presion,data.direccion],(error, results) => {
     if (error) { 
       // En caso de que haya error
       console.log("Error al insertar" + error);

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graficas</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <a href="fechas">Graficas por fechas</a>
+    <div class="titulo_grupo">Grupo 2</div>
+    <div class="titulo_medida">Medida Actual</div>
+
+    <div class="grafico-temperatura" style="--porcentaje_tem: 0%">
+      <div class="circulo-decoracion">
+        <div class="valor_temperatura">0</div>
+        <div class="titulo">Temperatura</div>
+      </div>
+    </div>
+
+    <div class="grafico-humedad_relativa" style="--porcentaje_hum_rel: 0%">
+      <div class="circulo-decoracion">
+        <div class="valor_humedad_relativa">0%</div>
+        <div class="titulo">Humedad Relativa</div>
+      </div>
+    </div>
+
+    <div class="grafico-humedad_absoluta" style="--porcentaje_hum_abs: 0%">
+      <div class="circulo-decoracion">
+        <div class="valor_humedad_absoluta">0%</div>
+        <div class="titulo">Humedad Absoluta</div>
+      </div>
+    </div>
+
+    <div class="grafico-velocidad_viento" style="--porcentaje_vel: 0%">
+      <div class="circulo-decoracion">
+        <div class="valor_velocidad_viento">0%</div>
+        <div class="titulo">Velocidad Viento</div>
+      </div>
+    </div>
+
+    <div class="grafico-presion_barometrica" style="--porcentaje_pre: 0%">
+      <div class="circulo-decoracion">
+        <div class="valor_presion_barometrica">0%</div>
+        <div class="titulo">Presion Barometrica</div>
+      </div>
+    </div>
+
+    <div class="brujula">
+      <div class="aguja" id="aguja" style="--grados: 90deg"></div>
+      <div class="norte">N</div>
+      <div class="sur">S</div>
+      <div class="este">E</div>
+      <div class="oeste">W</div>
+    </div>
+
+    <script>
+        // FUNCION PARA CAMBIAR EL PORCENTAJE DE LA TABLA
+        function cambiar_temperatura(nuevoPorcentaje) {
+          const grafico_temp = document.querySelector('.grafico-temperatura');
+          grafico_temp.style.setProperty('--porcentaje_tem', (nuevoPorcentaje *100/60) + '%');     // el 60 es el 100%
+          document.querySelector('.valor_temperatura').textContent = nuevoPorcentaje + '°C';
+        }
+        function cambiar_humedad_relativa(nuevoPorcentaje) {
+          const grafico = document.querySelector('.grafico-humedad_relativa');
+          grafico.style.setProperty('--porcentaje_hum_rel', nuevoPorcentaje + '%');
+          document.querySelector('.valor_humedad_relativa').textContent = nuevoPorcentaje + '%';
+        }
+        function cambiar_humedad_absoluta(nuevoPorcentaje) {
+          const grafico = document.querySelector('.grafico-humedad_absoluta');
+          grafico.style.setProperty('--porcentaje_hum_abs', nuevoPorcentaje + '%');
+          document.querySelector('.valor_humedad_absoluta').textContent = nuevoPorcentaje + '%';
+        }
+        function cambiar_velocidad_viento(nuevoPorcentaje) {
+          const grafico = document.querySelector('.grafico-velocidad_viento');
+          grafico.style.setProperty('--porcentaje_vel', (nuevoPorcentaje *100/200) + '%');    //200 es el 100%
+          document.querySelector('.valor_velocidad_viento').textContent = nuevoPorcentaje + 'Km/h';
+        }
+        function cambiar_presion_barometrica(nuevoPorcentaje) {
+          const grafico = document.querySelector('.grafico-presion_barometrica');
+          grafico.style.setProperty('--porcentaje_pre', (nuevoPorcentaje *100/1000) + '%');   //1000 es el 100%
+          document.querySelector('.valor_presion_barometrica').textContent = nuevoPorcentaje + 'MB';
+        }
+        function cambiar_grados(nuevo_grado){
+          const grafico = document.querySelector('.aguja');
+          grafico.style.setProperty('--grados',(-nuevo_grado-270)+'deg');
+        }
+
+        cambiar_temperatura(<%= data[data.length -1].temperatura %>);
+        cambiar_humedad_relativa(<%= data[data.length -1].humedadR %>);
+        cambiar_humedad_absoluta(<%= data[data.length -1].humedadA %>);
+        cambiar_velocidad_viento(<%= data[data.length -1].velocidad %>);
+        cambiar_presion_barometrica(<%= data[data.length -1].presion %>);
+        cambiar_grados(<%= data[data.length -1].direccion %>);
+
+        setInterval(function(){
+            location.reload();
+        }, 3000);
+    </script>
+  </body>
+</html>
