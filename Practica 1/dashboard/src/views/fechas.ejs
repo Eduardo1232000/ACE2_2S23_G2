@@ -11,9 +11,10 @@
       <h1 style="position: absolute; left: 45%;top: 0%;">Grupo 2</h1>
       <h2 style="position: absolute; left: 35%; top: 10%;">Medidas a lo largo del tiempo</h2>
     </div>
-    <div class="row" style="position: absolute; top: 20%; left: 10%;">
-        <div style="width: 700px; height: 700px; display: inline-block; margin-right: 100px;">
-          <canvas id="myChart"></canvas>
+    <div class="row" style="position: absolute; top: 200px; left: 10%;">
+
+        <div style="width: 700px; height: 700px;  margin-right: 100px;">
+          <canvas id="grafica_temperatura"></canvas>
         </div>
 
       <div class="col" style="display: inline-block; margin-right: 10px;">
@@ -25,24 +26,263 @@
           <input type="submit" value="Consultar" style=" font-size: 23px; border-radius: 8px; width: 250px; height: 40px; background-color: rgb(125, 227, 144);"/>
         </form>
       </div>
-
     </div>
 
+    <div style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 600px; left: 10%;">
+      <canvas id="grafica_humedad_relativa"></canvas>
+    </div>
+
+    <div style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 1000px; left: 10%;">
+      <canvas id="grafica_humedad_absoluta"></canvas>
+    </div>
+
+    <div style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 1400px; left: 10%;">
+      <canvas id="grafica_velocidad_viento"></canvas>
+    </div>
+
+    <div style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 1800px; left: 10%;">
+      <canvas id="grafica_presion_barometrica"></canvas>
+    </div>
+
+    <div style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 2200px; left: 10%;">
+      <canvas id="grafica_direccion_viento"></canvas>
+    </div>
+
+
     <script>
-      const ctx = document.getElementById("myChart");
+      //const ctx = document.getElementById("myChart");
+      const graf_temp = document.getElementById("grafica_temperatura");
+      const graf_hum_rel = document.getElementById("grafica_humedad_relativa");
+      const graf_hum_abs = document.getElementById("grafica_humedad_absoluta");
+      const graf_vel_viento = document.getElementById("grafica_velocidad_viento");
+      const graf_presion = document.getElementById("grafica_presion_barometrica");
+      const graf_direccion_viento = document.getElementById("grafica_direccion_viento");
       
-      var ejeY = [0, 56, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
+      var ejey_temp       = [0, 0, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
+      var ejey_hum_rel    = [10, 10, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
+      var ejey_hum_abs    = [20, 20, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
+      var ejey_vel_viento = [30, 30, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
+      var ejey_presion    = [40, 40, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
+      var ejey_direccion  = [50, 50, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
+
+      //EJE X ES SOLO 1 PORQUE DEPENDE DE LA FECHA 
       var ejeX = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-      var titulo = "Temperatura"
       
-      new Chart(ctx, {
+      //------------------------------------------------------- GRAFICA 1 -------------------------------------------
+      new Chart(graf_temp, {
         type: "line",
         data: {
           labels: ejeX,
           datasets: [
             {
-              label: titulo,
-              data: ejeY,
+              label: "Temperatura",
+              data: ejey_temp,
+              tension: 0.5,
+              borderColor: 'rgb(230, 178, 101)',
+              pointBackgroundColor: 'rgba(230, 178, 101)',
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Temperatura',
+              font: {
+                size: 24 // Cambia el tamaño del título aquí
+              }
+            }
+          },
+          scales: {
+            y : {
+            min : 0,
+            grid:{
+                display:false
+            }
+            },
+            x: {
+              ticks: { color: 'rgb(10, 10, 10)'},
+              grid:{
+                display:false
+              }
+            }
+          },
+        },
+      });
+
+      //------------------------------------------------------- GRAFICA 2-------------------------------------------
+      new Chart(graf_hum_rel, {
+        type: "line",
+        data: {
+          labels: ejeX,
+          datasets: [
+            {
+              label: "Humedad Relativa",
+              data: ejey_hum_rel,
+              tension: 0.5,
+              borderColor: 'rgb(75, 148, 227)',
+              pointBackgroundColor: 'rgba(75, 148, 227)',
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Humedad Relativa',
+              font: {
+                size: 24 // Cambia el tamaño del título aquí
+              }
+            }
+          },
+          scales: {
+            y : {
+            min : 0,
+            grid:{
+                display:false
+            }
+            },
+            x: {
+              ticks: { color: 'rgb(10, 10, 10)'},
+              grid:{
+                display:false
+              }
+            }
+          },
+        },
+      });
+      //------------------------------------------------------- GRAFICA 3-------------------------------------------
+      new Chart(graf_hum_abs, {
+        type: "line",
+        data: {
+          labels: ejeX,
+          datasets: [
+            {
+              label: "Humedad Absoluta",
+              data: ejey_hum_abs,
+              tension: 0.5,
+              borderColor: 'rgb(42, 161, 64)',
+              pointBackgroundColor: 'rgba(42, 161, 64)',
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Humedad Absoluta',
+              font: {
+                size: 24 // Cambia el tamaño del título aquí
+              }
+            }
+          },
+          scales: {
+            y : {
+            min : 0,
+            grid:{
+                display:false
+            }
+            },
+            x: {
+              ticks: { color: 'rgb(10, 10, 10)'},
+              grid:{
+                display:false
+              }
+            }
+          },
+        },
+      });
+      //------------------------------------------------------- GRAFICA 4-------------------------------------------
+      new Chart(graf_vel_viento, {
+        type: "line",
+        data: {
+          labels: ejeX,
+          datasets: [
+            {
+              label: "Velocidad Viento",
+              data: ejey_vel_viento,
+              tension: 0.5,
+              borderColor: 'rgb(120, 65, 196)',
+              pointBackgroundColor: 'rgba(120, 65, 196)',
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Velocidad Viento',
+              font: {
+                size: 24 // Cambia el tamaño del título aquí
+              }
+            }
+          },
+          scales: {
+            y : {
+            min : 0,
+            grid:{
+                display:false
+            }
+            },
+            x: {
+              ticks: { color: 'rgb(10, 10, 10)'},
+              grid:{
+                display:false
+              }
+            }
+          },
+        },
+      });
+      //------------------------------------------------------- GRAFICA 5-------------------------------------------
+      new Chart(graf_presion, {
+        type: "line",
+        data: {
+          labels: ejeX,
+          datasets: [
+            {
+              label: "Presion Barometrica",
+              data: ejey_presion,
+              tension: 0.5,
+              borderColor: 'rgb(218, 113, 222)',
+              pointBackgroundColor: 'rgba(218, 113, 222)',
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Presion Barometrica',
+              font: {
+                size: 24 // Cambia el tamaño del título aquí
+              }
+            }
+          },
+          scales: {
+            y : {
+            min : 0,
+            grid:{
+                display:false
+            }
+            },
+            x: {
+              ticks: { color: 'rgb(10, 10, 10)'},
+              grid:{
+                display:false
+              }
+            }
+          },
+        },
+      });
+      //------------------------------------------------------- GRAFICA 6-------------------------------------------
+      new Chart(graf_direccion_viento, {
+        type: "line",
+        data: {
+          labels: ejeX,
+          datasets: [
+            {
+              label: "Direccion Viento",
+              data: ejey_direccion,
               tension: 0.5,
               borderColor: 'rgb(115, 222, 135)',
               pointBackgroundColor: 'rgba(115, 222, 135)',
@@ -50,6 +290,15 @@
           ],
         },
         options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Direccion Viento',
+              font: {
+                size: 24 // Cambia el tamaño del título aquí
+              }
+            }
+          },
           scales: {
             y : {
             min : 0,
