@@ -28,7 +28,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   req.getConnection((err, conn) => {
-    const sql = "SELECT * FROM prueba";
+    const sql = "SELECT * FROM medicion ORDER BY id DESC LIMIT 1";
     conn.query(sql, (err, result) => {
       if (err) {
         console.log(err);

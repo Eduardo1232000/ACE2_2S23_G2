@@ -88,12 +88,12 @@
           grafico.style.setProperty('--grados',(-nuevo_grado-270)+'deg');
         }
 
-        cambiar_temperatura(<%= data[data.length -1].temperatura %>);
-        cambiar_humedad_relativa(<%= data[data.length -1].humedadR %>);
-        cambiar_humedad_absoluta(<%= data[data.length -1].humedadA %>);
-        cambiar_velocidad_viento(<%= data[data.length -1].velocidad %>);
-        cambiar_presion_barometrica(<%= data[data.length -1].presion %>);
-        cambiar_grados(<%= data[data.length -1].direccion %>);
+        cambiar_temperatura(<%= data[0].temperatura_externa %>);
+        cambiar_humedad_relativa(<%= data[0].humedad_relativa %>);
+        cambiar_humedad_absoluta(<%= data[0].humedad_absoluta %>);
+        cambiar_velocidad_viento(<%= data[0].velocidad_viento %>);
+        cambiar_presion_barometrica(<%= data[0].presion_barometrica %>);
+        cambiar_grados(<%= data[0].direccion_viento %>);
 
         setInterval(function(){
             location.reload();

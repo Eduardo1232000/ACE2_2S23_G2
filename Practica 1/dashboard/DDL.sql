@@ -7,7 +7,7 @@ CREATE TABLE medicion (
     humedad_relativa DECIMAL(10, 2),
     humedad_absoluta DECIMAL(10, 2),
     velocidad_viento DECIMAL(10, 2),
-    direccion_viento VARCHAR(1),
+    direccion_viento DECIMAL(10, 2),
     presion_barometrica DECIMAL(10, 2),
     fecha_registro DATETIME
 );
