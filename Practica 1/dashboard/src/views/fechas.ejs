@@ -25,10 +25,10 @@
     <div class="col" style="display: inline-block; margin-right: 10px;">
       <form action="">
         <label style="font-size: 25px;">Fecha inicio:</label><br>
-        <input id="txtFechaIni" type="date"
+        <input id="txtFechaIni" type="date" required
           style="width: 250px; height: 35px; border-radius: 8px; font-size: 20px;" /><br><br><br>
         <label style="font-size: 25px;">Fecha fin:</label><br>
-        <input id="txtFechaFin" type="date"
+        <input id="txtFechaFin" type="date" required
           style="width: 250px; height: 35px; border-radius: 8px; font-size: 20px;" /><br><br><br>
         <input id="btnConsultar" type="submit" value="Consultar"
           style=" font-size: 23px; border-radius: 8px; width: 250px; height: 40px; background-color: rgb(125, 227, 144);" />
@@ -64,26 +64,15 @@
     const graf_vel_viento = document.getElementById("grafica_velocidad_viento");
     const graf_presion = document.getElementById("grafica_presion_barometrica");
     const graf_direccion_viento = document.getElementById("grafica_direccion_viento");
-
-    var ejey_temp = [0, 0, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
-    var ejey_hum_rel = [10, 10, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
-    var ejey_hum_abs = [20, 20, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
-    var ejey_vel_viento = [30, 30, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
-    var ejey_presion = [40, 40, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
-    var ejey_direccion = [50, 50, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
-
-    //EJE X ES SOLO 1 PORQUE DEPENDE DE LA FECHA
-    var ejeX = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-
     //------------------------------------------------------- GRAFICA 1 -------------------------------------------
     let chart_temp = new Chart(graf_temp, {
       type: "line",
       data: {
-        labels: ejeX,
+        labels: [],
         datasets: [
           {
             label: "Temperatura",
-            data: ejey_temp,
+            data: [],
             tension: 0.5,
             borderColor: 'rgb(230, 178, 101)',
             pointBackgroundColor: 'rgba(230, 178, 101)',
@@ -120,11 +109,11 @@
     let chart_hum_rel = new Chart(graf_hum_rel, {
       type: "line",
       data: {
-        labels: ejeX,
+        labels: [],
         datasets: [
           {
             label: "Humedad Relativa",
-            data: ejey_hum_rel,
+            data: [],
             tension: 0.5,
             borderColor: 'rgb(75, 148, 227)',
             pointBackgroundColor: 'rgba(75, 148, 227)',
@@ -161,11 +150,11 @@
     let chart_hum_abs = new Chart(graf_hum_abs, {
       type: "line",
       data: {
-        labels: ejeX,
+        labels: [],
         datasets: [
           {
             label: "Humedad Absoluta",
-            data: ejey_hum_abs,
+            data: [],
             tension: 0.5,
             borderColor: 'rgb(42, 161, 64)',
             pointBackgroundColor: 'rgba(42, 161, 64)',
@@ -202,11 +191,11 @@
     let chart_vel_viento = new Chart(graf_vel_viento, {
       type: "line",
       data: {
-        labels: ejeX,
+        labels: [],
         datasets: [
           {
             label: "Velocidad Viento",
-            data: ejey_vel_viento,
+            data: [],
             tension: 0.5,
             borderColor: 'rgb(120, 65, 196)',
             pointBackgroundColor: 'rgba(120, 65, 196)',
@@ -243,11 +232,11 @@
     let chart_presion = new Chart(graf_presion, {
       type: "line",
       data: {
-        labels: ejeX,
+        labels: [],
         datasets: [
           {
             label: "Presion Barometrica",
-            data: ejey_presion,
+            data: [],
             tension: 0.5,
             borderColor: 'rgb(218, 113, 222)',
             pointBackgroundColor: 'rgba(218, 113, 222)',
@@ -282,17 +271,34 @@
     });
     //------------------------------------------------------- GRAFICA 6-------------------------------------------
     let chart_direccion_viento = new Chart(graf_direccion_viento, {
-      type: "line",
+      type: "radar",
       data: {
-        labels: ejeX,
+        labels: [],
         datasets: [
           {
-            label: "Direccion Viento",
-            data: ejey_direccion,
-            tension: 0.5,
+            label: "Este",
+            data: [],
             borderColor: 'rgb(115, 222, 135)',
             pointBackgroundColor: 'rgba(115, 222, 135)',
           },
+          {
+            label: "Norte",
+            data: [],
+            borderColor: 'rgba(222, 115, 115)',
+            pointBackgroundColor: 'rgba(222, 115, 115)',
+          },
+          {
+            label: "Oste",
+            data: [],
+            borderColor: 'rgba(115, 222, 188)',
+            pointBackgroundColor: 'rgba(115, 222, 188)',
+          },
+          {
+            label: "Sur",
+            data: [],
+            borderColor: 'rgba(115, 139, 222)',
+            pointBackgroundColor: 'rgba(115, 139, 222)',
+          }
         ],
       },
       options: {
@@ -302,20 +308,6 @@
             text: 'Direccion Viento',
             font: {
               size: 24 // Cambia el tamaño del título aquí
-            }
-          }
-        },
-        scales: {
-          y: {
-            min: 0,
-            grid: {
-              display: false
-            }
-          },
-          x: {
-            ticks: { color: 'rgb(10, 10, 10)' },
-            grid: {
-              display: false
             }
           }
         },
@@ -330,12 +322,21 @@
       grafica.update();
     }
 
+    function actualizarRadial(grafica, nuevoLabel, nuevaInfo) {
+      console.log(nuevaInfo);
+      grafica.data.labels = nuevoLabel;
+      grafica.data.datasets.forEach((dataset, index) => {
+        dataset.data = nuevaInfo[index];
+      });
+      grafica.update();
+    }
+
     document.getElementById("btnConsultar").addEventListener("click", function (event) {
       event.preventDefault();
       var txtFechaIni = document.getElementById("txtFechaIni").value;
       var txtFechaFin = document.getElementById("txtFechaFin").value;
-      const url = "http://localhost:3000/informacion/" + txtFechaIni + "/" + txtFechaFin;
-      fetch(url)
+      const url_lineal = "http://localhost:3000/informacion_lineal/" + txtFechaIni + "/" + txtFechaFin;
+      fetch(url_lineal)
         .then(response => response.json())
         .then(data => {
           actualizarGrafica(chart_temp, data.labels, data.data_prom_temp);
@@ -343,6 +344,16 @@
           actualizarGrafica(chart_hum_abs, data.labels, data.data_prom_hum_abs);
           actualizarGrafica(chart_vel_viento, data.labels, data.data_prom_vel_viento);
           actualizarGrafica(chart_presion, data.labels, data.data_prom_presion);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+      const url_radial = "http://localhost:3000/informacion_radial/" + txtFechaIni + "/" + txtFechaFin;
+      fetch(url_radial)
+        .then(response => response.json())
+        .then(data => {
+          actualizarRadial(chart_direccion_viento, data.labels, data.direccion);
         })
         .catch(error => {
           console.error('Error:', error);

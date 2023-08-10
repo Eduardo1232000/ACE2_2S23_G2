@@ -44,7 +44,7 @@ router.get("/Fechas", (req, res) => {
   res.render("fechas");
 });
 
-router.get("/informacion/:fecha_desde/:fecha_hasta", (req, res) => {
+router.get("/informacion_lineal/:fecha_desde/:fecha_hasta", (req, res) => {
 
   const fecha_desde = req.params.fecha_desde;
   const fecha_hasta = req.params.fecha_hasta;
@@ -62,7 +62,7 @@ router.get("/informacion/:fecha_desde/:fecha_hasta", (req, res) => {
         if (err) {
           console.log(err);
         } else {
-          res.json(formatearPorHora(result));
+          res.json(formatearPorHoraLineal(result));
         }
       });
     });
@@ -79,14 +79,52 @@ router.get("/informacion/:fecha_desde/:fecha_hasta", (req, res) => {
         if (err) {
           console.log(err);
         } else {
-          res.json(formatearPorDia(result));
+          res.json(formatearPorDiaLineal(result));
         }
       });
     });
   }
 });
 
-function formatearPorHora(result) {
+router.get("/informacion_radial/:fecha_desde/:fecha_hasta", (req, res) => {
+
+  const fecha_desde = req.params.fecha_desde;
+  const fecha_hasta = req.params.fecha_hasta;
+
+  if (fecha_desde == fecha_hasta) {
+    req.getConnection((err, conn) => {
+      const sql = `SELECT direccion_viento, DATE_FORMAT(fecha_registro, '%H:00:00') AS hora, COUNT(direccion_viento) AS prom_direccion_viento
+      FROM medicion
+      WHERE fecha_registro >= '` + fecha_desde + `' AND fecha_registro < DATE_ADD('` + fecha_hasta + `', INTERVAL 1 DAY)
+      GROUP BY direccion_viento, DATE_FORMAT(fecha_registro, '%H:00:00')
+      ORDER BY direccion_viento, hora ASC;`;
+      conn.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.json(formatearPorHoraRadial(result));
+        }
+      });
+    });
+  } else {
+    req.getConnection((err, conn) => {
+      const sql = `SELECT direccion_viento, DATE_FORMAT(fecha_registro, '%d/%m') AS dia, COUNT(direccion_viento) AS prom_direccion_viento
+      FROM medicion
+      WHERE fecha_registro >= '` + fecha_desde + `' AND fecha_registro < DATE_ADD('` + fecha_hasta + `', INTERVAL 1 DAY)
+      GROUP BY direccion_viento, DATE_FORMAT(fecha_registro, '%d/%m')
+      ORDER BY direccion_viento, dia ASC;`;
+      conn.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.json(formatearPorDiaRadial(result));
+        }
+      });
+    });
+  }
+});
+
+function formatearPorHoraLineal(result) {
   let labels = [];
   let data_prom_temp = [];
   let data_prom_hum_rel = [];
@@ -120,7 +158,7 @@ function formatearPorHora(result) {
   };
 }
 
-function formatearPorDia(result) {
+function formatearPorDiaLineal(result) {
   let labels = [];
   let data_prom_temp = [];
   let data_prom_hum_rel = [];
@@ -146,11 +184,112 @@ function formatearPorDia(result) {
   };
 }
 
+function formatearPorHoraRadial(result) {
+
+  let labels = [];
+  let data_este = [];
+  let data_norte = [];
+  let data_oeste = [];
+  let data_sur = [];
+
+  const este = result.filter(element => element['direccion_viento'] === 'E');
+  const norte = result.filter(element => element['direccion_viento'] === 'N');
+  const oeste = result.filter(element => element['direccion_viento'] === 'O');
+  const sur = result.filter(element => element['direccion_viento'] === 'S');
+
+  for (let i = 0; i < 24; i++) {
+    labels.push(calcularHora(i));
+
+    const val_este = este.find(element => element['hora'] === calcularHora(i));
+    if (val_este === undefined) {
+      data_este.push(0);
+    } else {
+      data_este.push(val_este.prom_direccion_viento);
+    }
+
+    const val_norte = norte.find(element => element['hora'] === calcularHora(i));
+    if (val_norte === undefined) {
+      data_norte.push(0);
+    } else {
+      data_norte.push(val_norte.prom_direccion_viento);
+    }
+
+    const val_oeste = oeste.find(element => element['hora'] === calcularHora(i));
+    if (val_oeste === undefined) {
+      data_oeste.push(0);
+    } else {
+      data_oeste.push(val_oeste.prom_direccion_viento);
+    }
+
+    const val_sur = sur.find(element => element['hora'] === calcularHora(i));
+    if (val_sur === undefined) {
+      data_sur.push(0);
+    } else {
+      data_sur.push(val_sur.prom_direccion_viento);
+    }
+  }
+  return {
+    labels: labels,
+    direccion: { 0: data_este, 1: data_norte, 2: data_oeste, 3: data_sur }
+  };
+}
+
+function formatearPorDiaRadial(result) {
+
+  let labels = [];
+  let data_este = [];
+  let data_norte = [];
+  let data_oeste = [];
+  let data_sur = [];
+
+  const este = result.filter(element => element['direccion_viento'] === 'E');
+  const norte = result.filter(element => element['direccion_viento'] === 'N');
+  const oeste = result.filter(element => element['direccion_viento'] === 'O');
+  const sur = result.filter(element => element['direccion_viento'] === 'S');
+
+  este.forEach(element => {
+    labels.push(element.dia);
+    data_este.push(element.prom_direccion_viento);
+  });
+
+  norte.forEach(element => {
+    labels.push(element.dia);
+    data_norte.push(element.prom_direccion_viento);
+  });
+
+  oeste.forEach(element => {
+    labels.push(element.dia);
+    data_oeste.push(element.prom_direccion_viento);
+  });
+
+  sur.forEach(element => {
+    labels.push(element.dia);
+    data_sur.push(element.prom_direccion_viento);
+  });
+
+  let labelsNoRepetidos = labels.filter((value, index, self) => {
+    return self.indexOf(value) === index;
+  });
+
+  const labelsOrdenados = labelsNoRepetidos.sort(compararFechas);
+
+  return {
+    labels: labelsOrdenados,
+    direccion: { 0: data_este, 1: data_norte, 2: data_oeste, 3: data_sur }
+  };
+}
+
 function calcularHora(multiplicador) {
   const horas = Math.floor(multiplicador);
   const minutos = (multiplicador - horas) * 60;
   const segundos = minutos * 60;
   return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+}
+
+function compararFechas(a, b) {
+  const fechaA = a.split('/').reverse().join('');
+  const fechaB = b.split('/').reverse().join('');
+  return fechaA.localeCompare(fechaB);
 }
 
 app.use("/", router);
