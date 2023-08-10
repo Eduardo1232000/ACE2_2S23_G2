@@ -25,8 +25,7 @@ parser.on("data", (data) => {
   console.log(data);
   // Parsear datos json
   data = JSON.parse(data);
-  const fecha = new Date();
-  var now = fecha.toISOString().replace("T", " ").replace("Z", "");
+  const now = new Date();
 
   // Insertar datos en base de datos
   connection.query(
