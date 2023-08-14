@@ -29,7 +29,7 @@ parser.on("data", (data) => {
 
   // Insertar datos en base de datos
   connection.query(
-    `INSERT INTO medicion(temperatura_externa,humedad_relativa,humedad_absoluta,velocidad_viento,direccion_viento,presion_barometrica,fecha_registro) VALUES (?,?,?,?,?,?,?);`,
+    `INSERT INTO medicion(temperatura_externa,velocidad_viento,humedad_relativa,humedad_absoluta,direccion_viento,presion_barometrica,fecha_registro) VALUES (?,?,?,?,?,?,?);`,
     [
       data.temperatura,
       data.velocidad,
