@@ -85,7 +85,7 @@
         }
         function cambiar_grados(nuevo_grado){
           const grafico = document.querySelector('.aguja');
-          grafico.style.setProperty('--grados',(-nuevo_grado-270)+'deg');
+          grafico.style.setProperty('--grados',(nuevo_grado)+'deg');
         }
 
         cambiar_temperatura(<%= data[0].temperatura_externa %>);
