@@ -29,14 +29,13 @@ int direccion;
 DHT dht(DHTPIN, DHTTYPE);
 Adafruit_BMP280 bmp;
 
-//
 // Cableado de TCS3200 a Arduino
-//
 #define S0 4
 #define S1 5
 #define S2 6
 #define S3 7
 #define sensorSalida 8
+
 int rojo = 0;  
 int verde = 0;  
 int azul = 0;  
@@ -54,7 +53,7 @@ void setup() {
   pinMode(S2, OUTPUT);
   pinMode(S3, OUTPUT);
   pinMode(sensorSalida, INPUT);
-                           // Configura la escala de Frecuencia en 20%
+  // Configura la escala de Frecuencia en 20%
   digitalWrite(S0,HIGH);
   digitalWrite(S1,LOW);
 }
@@ -67,7 +66,8 @@ void loop() {
   presion = presion*0.00750062;               // mmHg
   v1 =(analogRead(0));                        // lectura de sensor a0
   velocidad_viento = (v1*0.190);              // 0,190 corresponde a la pendiente de la curva aca deben poner el numero que calcularon
-
+  color();
+  
   if ((rojo < verde && rojo < azul && verde <= azul && rojo <= 40) || (rojo >= 9 && rojo <= 40 && verde >= 28 && verde <= 65 && azul >= 50 && azul <= 82)){   
     // AMARILLO
     direccion = 270; // oeste
@@ -93,8 +93,20 @@ void loop() {
     // AZUL
     direccion = 225; // suroeste
   }
-
-  String json = "{\"temperatura\":"+String(temperatura)+",\"presion\":"+String(presion)+",\"humedadR\":"+String(humedad_relativa)+",\"humedadA\":"+String(humedad_absoluta)+",\"velocidad\":"+String(velocidad_viento)+",\"direccion\":"+String(direccion)+"}\n";
+  
+  char buffer[10];  // Debes definir un buffer lo suficientemente grande para contener la cadena resultante
+  dtostrf(humedad_absoluta, 6, 4, buffer);  // dtostrf(valor, ancho_total, num_decimales, buffer)
+  String json = "{\"temperatura\":"+String(temperatura)+",\"presion\":"+String(presion)+",\"humedadR\":"+String(humedad_relativa)+",\"humedadA\":"+String(buffer)+",\"velocidad\":"+String(velocidad_viento)+",\"direccion\":"+String(direccion)+"}\n";
   Serial.write(json.c_str());
   delay(1000);
+}
+
+void color() {
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, LOW);
+  rojo = pulseIn(sensorSalida, digitalRead(sensorSalida) == HIGH ? LOW : HIGH);
+  digitalWrite(S3, HIGH);
+  azul = pulseIn(sensorSalida, digitalRead(sensorSalida) == HIGH ? LOW : HIGH);
+  digitalWrite(S2, HIGH);
+  verde = pulseIn(sensorSalida, digitalRead(sensorSalida) == HIGH ? LOW : HIGH);
 }
