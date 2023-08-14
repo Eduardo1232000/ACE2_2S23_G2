@@ -62,7 +62,7 @@ void loop() {
   temperatura = dht.readTemperature();        // °C
   humedad_relativa = dht.readHumidity();      // %
   presion = bmp.readPressure();               // Pa
-  humedad_absoluta= (((presion/101300)*18)/(0.0821*(temperatura+273.15)))*0.01; // g/m3
+  humedad_absoluta= (((presion/101300)*18)/(0.0821*(temperatura+273.15)))*1000; // g/m3
   presion = presion*0.00750062;               // mmHg
   v1 =(analogRead(0));                        // lectura de sensor a0
   velocidad_viento = (v1*0.190);              // 0,190 corresponde a la pendiente de la curva aca deben poner el numero que calcularon
@@ -93,10 +93,8 @@ void loop() {
     // AZUL
     direccion = 225; // suroeste
   }
-  
-  char buffer[10];  // Debes definir un buffer lo suficientemente grande para contener la cadena resultante
-  dtostrf(humedad_absoluta, 6, 4, buffer);  // dtostrf(valor, ancho_total, num_decimales, buffer)
-  String json = "{\"temperatura\":"+String(temperatura)+",\"presion\":"+String(presion)+",\"humedadR\":"+String(humedad_relativa)+",\"humedadA\":"+String(buffer)+",\"velocidad\":"+String(velocidad_viento)+",\"direccion\":"+String(direccion)+"}\n";
+
+  String json = "{\"temperatura\":"+String(temperatura)+",\"presion\":"+String(presion)+",\"humedadR\":"+String(humedad_relativa)+",\"humedadA\":"+String(humedad_absoluta)+",\"velocidad\":"+String(velocidad_viento)+",\"direccion\":"+String(direccion)+"}\n";
   Serial.write(json.c_str());
   delay(1000);
 }
