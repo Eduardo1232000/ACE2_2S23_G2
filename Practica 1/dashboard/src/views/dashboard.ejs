@@ -70,8 +70,8 @@
         }
         function cambiar_humedad_absoluta(nuevoPorcentaje) {
           const grafico = document.querySelector('.grafico-humedad_absoluta');
-          grafico.style.setProperty('--porcentaje_hum_abs', nuevoPorcentaje + '%');
-          document.querySelector('.valor_humedad_absoluta').textContent = nuevoPorcentaje + '%';
+          grafico.style.setProperty('--porcentaje_hum_abs', (nuevoPorcentaje *100/1000) + '%');
+          document.querySelector('.valor_humedad_absoluta').textContent = nuevoPorcentaje + 'g/m3';
         }
         function cambiar_velocidad_viento(nuevoPorcentaje) {
           const grafico = document.querySelector('.grafico-velocidad_viento');
@@ -81,7 +81,7 @@
         function cambiar_presion_barometrica(nuevoPorcentaje) {
           const grafico = document.querySelector('.grafico-presion_barometrica');
           grafico.style.setProperty('--porcentaje_pre', (nuevoPorcentaje *100/1000) + '%');   //1000 es el 100%
-          document.querySelector('.valor_presion_barometrica').textContent = nuevoPorcentaje + 'MB';
+          document.querySelector('.valor_presion_barometrica').textContent = nuevoPorcentaje + 'mmHg';
         }
         function cambiar_grados(nuevo_grado){
           const grafico = document.querySelector('.aguja');
