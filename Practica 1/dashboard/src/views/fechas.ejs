@@ -283,6 +283,18 @@
             pointBackgroundColor: 'rgba(222, 115, 115)',
           },
           {
+            label: "Noreste",
+            data: [],
+            borderColor: 'rgb(255, 222, 135)',
+            pointBackgroundColor: 'rgba(255, 222, 135)',
+          },
+          {
+            label: "Noroeste",
+            data: [],
+            borderColor: 'rgba(179, 135, 255)',
+            pointBackgroundColor: 'rgba(179, 135, 255)',
+          },
+          {
             label: "Oste",
             data: [],
             borderColor: 'rgba(115, 222, 188)',
@@ -293,7 +305,19 @@
             data: [],
             borderColor: 'rgba(115, 139, 222)',
             pointBackgroundColor: 'rgba(115, 139, 222)',
-          }
+          },
+          {
+            label: "Sureste",
+            data: [],
+            borderColor: 'rgb(255, 135, 206)',
+            pointBackgroundColor: 'rgba(255, 135, 206)',
+          },
+          {
+            label: "Suroeste",
+            data: [],
+            borderColor: 'rgba(255, 182, 135)',
+            pointBackgroundColor: 'rgba(255, 182, 135)',
+          },
         ],
       },
       options: {
@@ -318,7 +342,6 @@
     }
 
     function actualizarRadial(grafica, nuevoLabel, nuevaInfo) {
-      console.log(nuevaInfo);
       grafica.data.labels = nuevoLabel;
       grafica.data.datasets.forEach((dataset, index) => {
         dataset.data = nuevaInfo[index];
