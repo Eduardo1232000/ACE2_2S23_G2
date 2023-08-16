@@ -75,7 +75,7 @@
         }
         function cambiar_velocidad_viento(nuevoPorcentaje) {
           const grafico = document.querySelector('.grafico-velocidad_viento');
-          grafico.style.setProperty('--porcentaje_vel', (nuevoPorcentaje *100/200) + '%');    //200 es el 100%
+          grafico.style.setProperty('--porcentaje_vel', (nuevoPorcentaje *100/10) + '%');    //10 es el 100%
           document.querySelector('.valor_velocidad_viento').textContent = nuevoPorcentaje + 'Km/h';
         }
         function cambiar_presion_barometrica(nuevoPorcentaje) {
