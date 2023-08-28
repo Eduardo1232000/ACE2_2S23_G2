@@ -1,6 +1,6 @@
 var alertas = 0; //CONTADOR DE ALERTAS
-var fecha_ini = ""; //STRING DE FECHA INICIO
-var fecha_fin = ""; //STRING DE FECHA FINAL
+var fecha_ini; //STRING DE FECHA INICIO
+var fecha_fin; //STRING DE FECHA FINAL
 
 var status_sonido = "OFF"; //ESTADO DE ALERTA DE SONIDO
 var color_status_sonido = "black";
@@ -8,19 +8,50 @@ var color_status_sonido = "black";
 var status_led = "OFF"; //ESTADO DE ALERTA DE LED
 var color_status_led = "black";
 
-var date = new Date(); //FECHA ACTUAL
-var dateString = date.toDateString(); //STRING DE FECHA ACTUAL
-
 var btn_sonido; //BOTON DE ALERTA DE SONIDO
 var btn_led; //BOTON DE ALERTA DE LED
+
+var numberOfRows = 0;
+var numberOfColumns = 0;
+
+var dataChartLine;
 
 function setup() {
   createCanvas(1200, 720);
   background("#DEDEDE");
-  btn_sonido = createButton(status_sonido).position(200, 125).mousePressed(sonidoPressed);
-  btn_led = createButton(status_led).position(200, 225).mousePressed(ledPressed);
+  btn_sonido = createButton(status_sonido)
+    .position(200, 125)
+    .mousePressed(sonidoPressed);
+  btn_led = createButton(status_led)
+    .position(200, 225)
+    .mousePressed(ledPressed);
   fecha_ini = createInput("2023-01-01", "date").position(600, 30);
   fecha_fin = createInput("2023-01-01", "date").position(600, 80);
+
+  setInterval(fillData, 1000);
+}
+
+function fillData() {
+  loadJSON("http://localhost:3000", gotData);
+  loadJSON(
+    "http://localhost:3000/barra/" +
+      fecha_ini.value() +
+      "/" +
+      fecha_fin.value(),
+    gotDataG
+  );
+}
+
+function gotData(data) {
+  console.log(data);
+  alertas = data.caidas;
+}
+
+function gotDataG(data) {
+  console.log(data);
+  numberOfRows = data.length;
+  numberOfColumns = 2;
+  dataChartLine = data;
 }
 
 function draw() {
@@ -55,6 +86,49 @@ function draw() {
   rect(244, 126, 30, 28);
   fill(color_status_led);
   rect(244, 226, 30, 28);
+
+  if (dataChartLine) {
+    lineChart();
+  }
+}
+
+function lineChart() {
+  fill(0);
+  textSize(10);
+
+  var max_value = 0;
+
+  for (var i = 0; i < numberOfRows; i++) {
+    //place years
+    push();
+    rotate(radians(270));
+    text(dataChartLine[i].fecha, -655, 505 + i * 30);
+    pop();
+
+    if (dataChartLine[i].caidas > max_value)
+      max_value = dataChartLine[i].caidas;
+
+    //draw graph
+    if (i == 0) {
+      line(
+        i * 30 + 470,
+        600,
+        (i + 1) * 30 + 470,
+        600 - dataChartLine[i].caidas * 10
+      );
+    } else {
+      line(
+        i * 30 + 470,
+        600 - dataChartLine[i-1].caidas * 10,
+        (i + 1) * 30 + 470,
+        600 - dataChartLine[i].caidas * 10
+      );
+    }
+  }
+
+  for (var k = 0; k <= max_value; k = k + 1) {
+    text(k, 450, 600 - k * 10);
+  }
 }
 
 function sonidoPressed() {
