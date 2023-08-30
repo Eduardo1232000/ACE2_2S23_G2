@@ -16,10 +16,11 @@ app.use(
   myconnection(
     mysql,
     {
-      host: process.env.HOST,
-      database: process.env.DATABASE,
-      user: process.env.USER_NAME,
-      password: process.env.PASSWORD,
+      host: process.env.DB_HOST,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      port: process.env.DB_PORT
     },
     "single"
   )
@@ -28,56 +29,51 @@ app.use(
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  /* req.getConnection((err, conn) => {
-    const sql = "SELECT * FROM medicion ORDER BY id DESC LIMIT 1";
-    conn.query(sql, (err, result) => {
+  res.json({ caidas: "Funcionando correctamente" });
+});
+
+router.post("/caidas", (req, res) => {
+  const now = new Date();
+  req.getConnection((err, conn) => {
+    const sql = "INSERT INTO caida (fecha_registro) VALUES (?)";
+    conn.query(sql, [now], (err, result) => {
       if (err) {
         console.log(err);
       }
-      res.json(result);
+      res.json({ success: true, mensaje: "Caida registrada correctamente" });
     });
-  });*/
-  res.json({ caidas: Math.floor(Math.random() * 10) });
+  });
 });
 
-router.get("/barra/:fechaini/:fechafin", (req, res) => {
+router.get("/caidas/:fechaini/:fechafin", (req, res) => {
   const fecha_desde = req.params.fecha_desde;
   const fecha_hasta = req.params.fecha_hasta;
-  /* req.getConnection((err, conn) => {
-      const sql = "SELECT * FROM medicion ORDER BY id DESC LIMIT 1";
-      conn.query(sql, (err, result) => {
-        if (err) {
-          console.log(err);
-        }
-        res.json(result);
-      });
-    });*/
-  res.json([
-    {
-      fecha: "2021-04-01",
-      caidas: 2,
-    },
-    {
-      fecha: "2021-04-03",
-      caidas: 3,
-    },
-    {
-      fecha: "2021-04-01",
-      caidas: 9,
-    },
-    {
-      fecha: "2021-04-03",
-      caidas: 5,
-    },
-    {
-      fecha: "2021-04-01",
-      caidas: 0,
-    },
-    {
-      fecha: "2021-04-03",
-      caidas: 8,
-    },
-  ]);
+
+  if (fecha_desde == fecha_hasta) {
+    // req.getConnection((err, conn) => {
+    //   const sql = "INSERT INTO caida (fecha_registro) VALUES (?)";
+    //   conn.query(sql, [now], (err, result) => {
+    //     if (err) {
+    //       console.log(err);
+    //       res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+    //     } else {
+    //       res.json({ success: true, info: "Caida registrada correctamente" });
+    //     }
+    //   });
+    // });
+  } else {
+    // req.getConnection((err, conn) => {
+    //   const sql = "INSERT INTO caida (fecha_registro) VALUES (?)";
+    //   conn.query(sql, [now], (err, result) => {
+    //     if (err) {
+    //       console.log(err);
+    //       res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+    //     } else {
+    //       res.json({ success: true, info: "Caida registrada correctamente" });
+    //     }
+    //   });
+    // });
+  }
 });
 
 app.use("/", router);
