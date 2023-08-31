@@ -13,6 +13,7 @@ var btn_led; //BOTON DE ALERTA DE LED
 
 var numberOfRows = 0;
 var numberOfColumns = 0;
+const URL_SERVER = "http://localhost:3000";
 
 var dataChartLine;
 
@@ -25,21 +26,70 @@ function setup() {
   btn_led = createButton(status_led)
     .position(200, 225)
     .mousePressed(ledPressed);
-  fecha_ini = createInput("2023-01-01", "date").position(600, 30);
-  fecha_fin = createInput("2023-01-01", "date").position(600, 80);
-
-  setInterval(fillData, 1000);
+  fecha_ini = createInput("2023-08-01", "date").position(600, 30);
+  fecha_fin = createInput("2023-08-01", "date").position(600, 80);
+  button = createButton('Graficar');
+  button.position(670, 130);
+  button.mousePressed(mostrarGrafica);
 }
 
 function fillData() {
-  loadJSON("http://localhost:3000", gotData);
-  loadJSON(
-    "http://localhost:3000/barra/" +
-      fecha_ini.value() +
-      "/" +
-      fecha_fin.value(),
-    gotDataG
-  );
+
+  // loadJSON("http://localhost:3000", gotData);
+  // loadJSON(
+  //   "http://localhost:3000/barra/" +
+  //     fecha_ini.value() +
+  //     "/" +
+  //     fecha_fin.value(),
+  //   gotDataG
+  // );
+}
+
+function pintarGraficaHora(data) {
+
+  var sketch = function (p) {
+    // Configuracion inicial
+    p.setup = function () {
+
+      // Se crea un canvas
+      var canvas = p.createCanvas(600, 350).position(400, 325);
+      p.background(150);
+
+      // Prepara los puntos para el ploteo
+      var points = [];
+      for (var i = 0; i < data.length; i++) {
+        points[i] = new GPoint(i, data[i]);
+      }
+
+      // Crea un nuevo ploteo y establece su posicion y dimension en la pantalla.
+      var plot = new GPlot(p);
+      plot.setPos(10, 10);
+      plot.setDim(480, 230);
+      plot.getXAxis().setNTicks(24);
+
+      // Establece el titulo del grafico y las etiquetas de los ejes
+      plot.getXAxis().setAxisLabelText("Hora");
+      plot.getYAxis().setAxisLabelText("Cantidad");
+      plot.setPoints(points);;
+
+      // Lo dibuja
+      p.draw = function () {
+        plot.beginDraw();
+        plot.drawBackground();
+        plot.drawBox();
+        plot.drawXAxis();
+        plot.drawYAxis();
+        plot.drawTitle();
+        plot.drawGridLines(GPlot.BOTH);
+        plot.drawLines();
+        plot.drawPoints();
+        plot.endDraw();
+      };
+
+      p.noLoop();
+    };
+  };
+  var myp5 = new p5(sketch);
 }
 
 function gotData(data) {
@@ -119,7 +169,7 @@ function lineChart() {
     } else {
       line(
         i * 30 + 470,
-        600 - dataChartLine[i-1].caidas * 10,
+        600 - dataChartLine[i - 1].caidas * 10,
         (i + 1) * 30 + 470,
         600 - dataChartLine[i].caidas * 10
       );
@@ -128,6 +178,21 @@ function lineChart() {
 
   for (var k = 0; k <= max_value; k = k + 1) {
     text(k, 450, 600 - k * 10);
+  }
+}
+
+function mostrarGrafica() {
+  if (fecha_ini.value() == fecha_fin.value()) {
+    fetch(URL_SERVER + '/caidas/' + fecha_ini.value() + '/' + fecha_fin.value())
+      .then(response => response.json())
+      .then(data => {
+        pintarGraficaHora(data.info);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  } else {
+    // console.log("Graficar");
   }
 }
 
