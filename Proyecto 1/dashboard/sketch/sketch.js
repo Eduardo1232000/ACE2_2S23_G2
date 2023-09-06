@@ -27,24 +27,13 @@ function setup() {
     .position(200, 225)
     .mousePressed(ledPressed);
   fecha_ini = createInput("2023-08-01", "date").position(600, 30);
-  fecha_fin = createInput("2023-08-01", "date").position(600, 80);
+  fecha_fin = createInput("2023-08-05", "date").position(600, 80);
   button = createButton('Graficar');
   button.position(670, 130);
   button.mousePressed(mostrarGrafica);
 }
 
-function fillData() {
-
-  // loadJSON("http://localhost:3000", gotData);
-  // loadJSON(
-  //   "http://localhost:3000/barra/" +
-  //     fecha_ini.value() +
-  //     "/" +
-  //     fecha_fin.value(),
-  //   gotDataG
-  // );
-}
-
+let myp5_hora;
 function pintarGraficaHora(data) {
 
   var sketch = function (p) {
@@ -89,19 +78,89 @@ function pintarGraficaHora(data) {
       p.noLoop();
     };
   };
-  var myp5 = new p5(sketch);
+  myp5_hora = new p5(sketch);
 }
 
-function gotData(data) {
-  console.log(data);
-  alertas = data.caidas;
-}
+// Restricciones
+// 1. En el eje X soporta hasta 31 titulos
+// 2. En el eje Y soporta hasta 12 titulos
+let myp5_dia;
+function pintarGraficaDia(data) {
 
-function gotDataG(data) {
-  console.log(data);
-  numberOfRows = data.length;
-  numberOfColumns = 2;
-  dataChartLine = data;
+  // Se verifica que hallan registros que graficar
+  if (data.length <= 0) {
+    return;
+  }
+
+  if (typeof myp5_dia !== 'undefined') {
+    myp5_dia.remove();
+  }
+
+  var sketch = function (p) {
+    // Configuracion inicial
+    p.setup = function () {
+
+      // Se crea un canvas
+      var canvas = p.createCanvas(600, 350).position(400, 325);
+
+      // Configurando el lienzo
+      p.fill(0);
+      p.textSize(10);
+
+      // Se inicializa las variables para empezar a graficar
+      const TAMANIO_LIENZO_X = 527;
+      const TAMANIO_LIENZO_Y = 276;
+      let cantidad_titulos_y = data.length > 12 ? 12 : data.length;
+      let espacio_x = TAMANIO_LIENZO_X / data.length;
+      let espacio_y = TAMANIO_LIENZO_Y / cantidad_titulos_y;
+      let valor_maximo_y = data.reduce((max, elemento) => { return (elemento.cantidad > max) ? elemento.cantidad : max; }, data[0].cantidad);
+      let multiplo_y = valor_maximo_y / TAMANIO_LIENZO_Y;
+
+      // Variables para graficar las lineas
+      let inicio_grafica_x = 0;
+      let inicio_grafica_y = 0;
+      let acum = 1;
+
+      // Se dibuja la linea del eje X
+      p.line(50, 300, 587, 300);
+      // Se dibuja la linea del eje Y
+      p.line(50, 300, 50, 14);
+      // Se inicia con el pintado de la grafica
+      data.forEach((element, i) => {
+
+        // Si hay mas de 31 datos que se deben de mostrar se para de graficar
+        if (i > 30) {
+          return;
+        }
+
+        // Se dibujan los titulos del eje X
+        p.push();
+        p.rotate(radians(270));
+        p.text(element.dia, -330, 50 + (i + 1) * espacio_x);
+        p.pop();
+
+        // Se dibujan los titulos del eje Y
+        if (cantidad_titulos_y > 0) {
+          p.text(Math.round(espacio_y * multiplo_y * acum), 20, 300 - (TAMANIO_LIENZO_Y - espacio_y * cantidad_titulos_y + espacio_y));
+          cantidad_titulos_y--;
+          acum++;
+        }
+
+        // Se dibuja el punto de referencia de la coordenada
+        p.push();
+        p.stroke('red');
+        p.strokeWeight(6);
+        p.point(50 + (i + 1) * espacio_x, 300 - (element.cantidad / multiplo_y));
+        p.pop();
+
+        // Se dibuja la linea que representa la grafica
+        p.line(50 + inicio_grafica_x, 300 - inicio_grafica_y, 50 + (i + 1) * espacio_x, 300 - (element.cantidad / multiplo_y));
+        inicio_grafica_x = (i + 1) * espacio_x;
+        inicio_grafica_y = element.cantidad / multiplo_y;
+      });
+    }
+  }
+  myp5_dia = new p5(sketch);
 }
 
 function draw() {
@@ -136,49 +195,6 @@ function draw() {
   rect(244, 126, 30, 28);
   fill(color_status_led);
   rect(244, 226, 30, 28);
-
-  if (dataChartLine) {
-    lineChart();
-  }
-}
-
-function lineChart() {
-  fill(0);
-  textSize(10);
-
-  var max_value = 0;
-
-  for (var i = 0; i < numberOfRows; i++) {
-    //place years
-    push();
-    rotate(radians(270));
-    text(dataChartLine[i].fecha, -655, 505 + i * 30);
-    pop();
-
-    if (dataChartLine[i].caidas > max_value)
-      max_value = dataChartLine[i].caidas;
-
-    //draw graph
-    if (i == 0) {
-      line(
-        i * 30 + 470,
-        600,
-        (i + 1) * 30 + 470,
-        600 - dataChartLine[i].caidas * 10
-      );
-    } else {
-      line(
-        i * 30 + 470,
-        600 - dataChartLine[i - 1].caidas * 10,
-        (i + 1) * 30 + 470,
-        600 - dataChartLine[i].caidas * 10
-      );
-    }
-  }
-
-  for (var k = 0; k <= max_value; k = k + 1) {
-    text(k, 450, 600 - k * 10);
-  }
 }
 
 function mostrarGrafica() {
@@ -186,13 +202,27 @@ function mostrarGrafica() {
     fetch(URL_SERVER + '/caidas/' + fecha_ini.value() + '/' + fecha_fin.value())
       .then(response => response.json())
       .then(data => {
+        if (typeof myp5_dia !== 'undefined') {
+          myp5_dia.remove();
+        }
         pintarGraficaHora(data.info);
       })
       .catch(error => {
         console.error('Error:', error);
       });
   } else {
-    // console.log("Graficar");
+    fetch(URL_SERVER + '/caidas/' + fecha_ini.value() + '/' + fecha_fin.value())
+      .then(response => response.json())
+      .then(data => {
+        if (typeof myp5_hora !== 'undefined') {
+          myp5_hora.remove();
+        }
+        console.log(data.info);
+        pintarGraficaDia(data.info);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
 }
 
