@@ -104,6 +104,37 @@ router.get("/alertas/:fecha_desde/:fecha_hasta", (req, res) => {
 
 });
 
+router.put("/caidas/notificacionSound", (req, res) => {
+  const sonido = req.body.sonido;
+  console.log(req.body);
+  req.getConnection((err, conn) => {
+    const sql = "UPDATE alerta SET sonido = ? WHERE id = 1";
+    conn.query(sql, [sonido], (err, result) => {
+      if (err) {
+        console.log(err);
+        res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+      } else {
+        res.json({ success: true, mensaje: "Actualizado correctamente" });
+      }
+    });
+  });
+});
+
+router.put("/caidas/notificacionLed", (req, res) => {
+  const led = req.body.led;
+  req.getConnection((err, conn) => {
+    const sql = "UPDATE alerta SET led = ? WHERE id = 1";
+    conn.query(sql, [led], (err, result) => {
+      if (err) {
+        console.log(err);
+        res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+      } else {
+        res.json({ success: true, mensaje: "Actualizado correctamente" });
+      }
+    });
+  });
+});
+
 function formatearPorHora(result) {
   let data = [];
   for (let i = 0; i < 24; i++) {
