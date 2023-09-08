@@ -85,6 +85,25 @@ router.get("/caidas/:fecha_desde/:fecha_hasta", (req, res) => {
   }
 });
 
+router.get("/alertas/:fecha_desde/:fecha_hasta", (req, res) => {
+
+  const fecha_desde = req.params.fecha_desde;
+  const fecha_hasta = req.params.fecha_hasta;
+
+  req.getConnection((err, conn) => {
+    const sql = `SELECT COUNT(id) AS cantidad FROM caida c WHERE c.fecha_registro >= ? AND c.fecha_registro < DATE_ADD(?, INTERVAL 1 DAY)`;
+    conn.query(sql, [fecha_desde, fecha_hasta], (err, result) => {
+      if (err) {
+        console.log(err);
+        res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+      } else {
+        res.json({ success: true, info: result[0] });
+      }
+    });
+  });
+
+});
+
 function formatearPorHora(result) {
   let data = [];
   for (let i = 0; i < 24; i++) {

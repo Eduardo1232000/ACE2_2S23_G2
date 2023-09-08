@@ -189,7 +189,7 @@ function draw() {
   text("REGISTRO DE CAÍDAS", 440, 300);
 
   textSize(80); //TEXTOS SIZE 80
-  text(alertas, 170, 560);
+  text(alertas, 120, 560);
 
   fill(color_status_sonido);
   rect(244, 126, 30, 28);
@@ -224,6 +224,15 @@ function mostrarGrafica() {
         console.error('Error:', error);
       });
   }
+
+  fetch(URL_SERVER + '/alertas/' + fecha_ini.value() + '/' + fecha_fin.value())
+    .then(response => response.json())
+    .then(data => {
+      alertas = data.info.cantidad;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
 }
 
 function sonidoPressed() {
