@@ -1,4 +1,5 @@
 var alertas = 0; //CONTADOR DE ALERTAS
+var caidas = 0; //CONTADOR DE CAIDAS
 var fecha_ini; //STRING DE FECHA INICIO
 var fecha_fin; //STRING DE FECHA FINAL
 
@@ -171,6 +172,7 @@ function pintarGraficaDia(data) {
 }
 
 function draw() {
+  tiempoReal();
   fill(255, 255, 255); //COLOR BLANCO
   rect(380, 230, 650, 450); //AREA DE GRAFICA
   rect(25, 25, 325, 325); //AREA DE NOTIFICACIONES
@@ -190,13 +192,17 @@ function draw() {
   textSize(30); //TEXTOS SIZE 30
   text("NOTIFICACIONES", 75, 75);
   textSize(25); //TEXTOS SIZE 25
-  text("NUMERO DE ALERTAS", 50, 425);
+  text("NUMERO DE CAIDAS", 50, 425);
+  textSize(25); //TEXTOS SIZE 25
+  text("NUMERO DE ALERTAS", 50, 565);
 
   textSize(50); //TEXTOS SIZE 60
   text("REGISTRO DE CAÍDAS", 440, 300);
 
-  textSize(80); //TEXTOS SIZE 80
-  text(alertas, 120, 560);
+  textSize(60); //TEXTOS SIZE 80
+  text(caidas, 150, 500);
+  textSize(60); //TEXTOS SIZE 80
+  text(alertas, 150, 650);
 
   fill(color_status_sonido);
   rect(244, 126, 30, 28);
@@ -232,14 +238,10 @@ function mostrarGrafica() {
       });
   }
 
-  fetch(URL_SERVER + "/alertas/" + fecha_ini.value() + "/" + fecha_fin.value())
-    .then((response) => response.json())
-    .then((data) => {
-      alertas = data.info.cantidad;
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+}
+
+function tiempoReal() {
+  fetch(URL_SERVER + "/caidas").then((response) => response.json()).then((data) => {caidas = data.info.caidas; alertas = data.info.alertas;}).catch((error) => {console.error("Error:", error);});
 }
 
 function sonidoPressed() {

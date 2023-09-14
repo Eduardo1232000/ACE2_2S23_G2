@@ -20,7 +20,7 @@ app.use(
       user: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      port: process.env.DB_PORT
+      port: process.env.DB_PORT,
     },
     "single"
   )
@@ -32,21 +32,21 @@ router.get("/", (req, res) => {
   res.json({ caidas: "Funcionando correctamente" });
 });
 
-router.post("/caidas", (req, res) => {
-  const now = new Date();
+router.get("/caidas", (req, res) => {
   req.getConnection((err, conn) => {
-    const sql = "INSERT INTO caida (fecha_registro) VALUES (?)";
-    conn.query(sql, [now], (err, result) => {
+    const sql =
+      "select count(*) as caidas, sum(CASE when C.alerta = 1 then 1 else 0 end) as alertas from caida C;";
+    conn.query(sql, (err, result) => {
       if (err) {
         console.log(err);
+        res.json({ info: { caidas: 0, alertas: 0 } });
       }
-      res.json({ success: true, mensaje: "Caida registrada correctamente" });
+      res.json({ info: { caidas: result[0].caidas, alertas: result[0].alertas } });
     });
   });
 });
 
 router.get("/caidas/:fecha_desde/:fecha_hasta", (req, res) => {
-
   const fecha_desde = req.params.fecha_desde;
   const fecha_hasta = req.params.fecha_hasta;
 
@@ -60,7 +60,10 @@ router.get("/caidas/:fecha_desde/:fecha_hasta", (req, res) => {
       conn.query(sql, [fecha_desde, fecha_hasta], (err, result) => {
         if (err) {
           console.log(err);
-          res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+          res.json({
+            success: false,
+            mensaje: "Ha ocurrido un error al querer obtener la informacion",
+          });
         } else {
           res.json({ success: true, info: formatearPorHora(result) });
         }
@@ -76,7 +79,10 @@ router.get("/caidas/:fecha_desde/:fecha_hasta", (req, res) => {
       conn.query(sql, [fecha_desde, fecha_hasta], (err, result) => {
         if (err) {
           console.log(err);
-          res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+          res.json({
+            success: false,
+            mensaje: "Ha ocurrido un error al querer obtener la informacion",
+          });
         } else {
           res.json({ success: true, info: result });
         }
@@ -86,7 +92,6 @@ router.get("/caidas/:fecha_desde/:fecha_hasta", (req, res) => {
 });
 
 router.get("/alertas/:fecha_desde/:fecha_hasta", (req, res) => {
-
   const fecha_desde = req.params.fecha_desde;
   const fecha_hasta = req.params.fecha_hasta;
 
@@ -95,13 +100,15 @@ router.get("/alertas/:fecha_desde/:fecha_hasta", (req, res) => {
     conn.query(sql, [fecha_desde, fecha_hasta], (err, result) => {
       if (err) {
         console.log(err);
-        res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+        res.json({
+          success: false,
+          mensaje: "Ha ocurrido un error al querer obtener la informacion",
+        });
       } else {
         res.json({ success: true, info: result[0] });
       }
     });
   });
-
 });
 
 router.put("/caidas/notificacionSound", (req, res) => {
@@ -112,7 +119,10 @@ router.put("/caidas/notificacionSound", (req, res) => {
     conn.query(sql, [sonido], (err, result) => {
       if (err) {
         console.log(err);
-        res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+        res.json({
+          success: false,
+          mensaje: "Ha ocurrido un error al querer obtener la informacion",
+        });
       } else {
         res.json({ success: true, mensaje: "Actualizado correctamente" });
       }
@@ -127,7 +137,10 @@ router.put("/caidas/notificacionLed", (req, res) => {
     conn.query(sql, [led], (err, result) => {
       if (err) {
         console.log(err);
-        res.json({ success: false, mensaje: "Ha ocurrido un error al querer obtener la informacion" });
+        res.json({
+          success: false,
+          mensaje: "Ha ocurrido un error al querer obtener la informacion",
+        });
       } else {
         res.json({ success: true, mensaje: "Actualizado correctamente" });
       }
@@ -138,7 +151,7 @@ router.put("/caidas/notificacionLed", (req, res) => {
 function formatearPorHora(result) {
   let data = [];
   for (let i = 0; i < 24; i++) {
-    const valor = result.find(element => element['hora'] === calcularHora(i));
+    const valor = result.find((element) => element["hora"] === calcularHora(i));
     if (valor === undefined) {
       data.push(0);
     } else {
@@ -152,7 +165,9 @@ function calcularHora(multiplicador) {
   const horas = Math.floor(multiplicador);
   const minutos = (multiplicador - horas) * 60;
   const segundos = minutos * 60;
-  return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+  return `${horas.toString().padStart(2, "0")}:${minutos
+    .toString()
+    .padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`;
 }
 
 app.use("/", router);
