@@ -106,7 +106,9 @@ void loop() {
   // Lectura actual
   digitalWrite(LED_3, HIGH);
   dist_act_1 = leerUltrasonico(sonar1, 10, dist_ant_1);
+  delay(30);
   dist_act_2 = leerUltrasonico(sonar2, 10, dist_ant_2);
+  delay(30);
   dist_act_3 = leerUltrasonico(sonar3, 10, dist_ant_3);
   digitalWrite(LED_3, LOW);
 
@@ -137,23 +139,23 @@ void loop() {
         if (led == 1 and buzzer != 1) {
           digitalWrite(LED_1, HIGH);
           digitalWrite(LED_2, HIGH);
-          delay(1000);               // 10 s 
+          delay(10000);               // 10 s 
           digitalWrite(LED_1, LOW);
           digitalWrite(LED_2, LOW);
         }
         else if (led != 1 and buzzer == 1) {
           digitalWrite(BUZZER, HIGH);
-          delay(3000);               // 30 s
+          delay(30000);               // 30 s
           digitalWrite(BUZZER, LOW);
         }
         else if (led == 1 and buzzer == 1) {
           digitalWrite(LED_1, HIGH);
           digitalWrite(LED_2, HIGH);
           digitalWrite(BUZZER, HIGH);
-          delay(1000);               // 10 s
+          delay(10000);               // 10 s
           digitalWrite(LED_1, LOW);
           digitalWrite(LED_2, LOW);
-          delay(2000);
+          delay(20000);
           digitalWrite(BUZZER, LOW);
         }
         flag = false;
