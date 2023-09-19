@@ -14,6 +14,7 @@
 // Leds
 #define LED_1 9
 #define LED_2 10
+#define LED_3 12
 #define BUZZER 11
 #define MAX_DISTANCE 400 // Distancia máxima de medición en centímetros que puede medir
 
@@ -38,29 +39,49 @@ int dist_ant_3 = 0;
 
 // Diferencia minima que debe haber entre
 // la distancia anterior y la actual (distancia_actual - distancia_anterior)
-int error = 20;
+int error = 3;
+
 // Numero de lecturas que hará (para sacar un promedio de las distancias)
-int num_lect = 30;
+int num_lect = 20;
+int mediciones[20]; // Arreglo para almacenar las mediciones
 
-int leerUltrasonico(/*int TRIGGER, int ECHO*/NewPing sonar) {
+int leerUltrasonico(NewPing sonar, double desviacion_estandar_objetivo, int distancia) {
   int total = 0;
-  int promedio = 0;
-  int val_invalidos = 0;
+  unsigned long tiempo_actual = millis();
 
-  // Obteniendo promedio de mediciones
-  for (int i = 0; i < num_lect; i++) {
-    int valor = sonar.ping_cm();        // Obteniendo la distancia en centimetros
-    if (valor > 400 /*or valor < 100*/) {   // Datos no validos
-      val_invalidos++;
+  do {
+    // Obteniendo mediciones
+    for (int i = 0; i < num_lect; i++) {
+      int valor = sonar.ping_cm();    // Obteniendo la distancia en centímetros
+      mediciones[i] = valor;          // Guardar la medición en el arreglo
+      total += valor;
+      delay(15);
+    }
+
+    int promedio = total / (num_lect);
+
+    // Calcular la desviación estándar
+    double suma_cuadrados = 0.0;
+    for (int i = 0; i < num_lect; i++) {
+      double diferencia = mediciones[i] - promedio;
+      suma_cuadrados += diferencia * diferencia;
+    }
+
+    double desviacion_estandar = sqrt(suma_cuadrados / (num_lect));
+
+    // Comprobar si la desviación estándar es mayor que el objetivo
+    if (desviacion_estandar > desviacion_estandar_objetivo or promedio == 0) {
+      // Si ya pasaron 4 segundo sin devolver una distancia, devolver la distancia anterior
+      if (millis() - tiempo_actual > 4000) {
+        return distancia;
+      }
+      // Si la desviación estándar es grande, volver a realizar la medición
+      total = 0;
     }
     else {
-      total += valor;
+      return promedio;
     }
-    delay(15);
-  }
-
-  promedio = total / (num_lect - val_invalidos);
-  return promedio;
+  } while (true); // Continuar hasta que se alcance la desviación estándar deseada
 }
 
 void setup() {
@@ -72,62 +93,71 @@ void setup() {
   pinMode(ECHO_PIN_3, INPUT);
   pinMode(LED_1, OUTPUT);
   pinMode(LED_2, OUTPUT);
+  pinMode(LED_3, OUTPUT);
   pinMode(BUZZER, OUTPUT);
   Serial.begin(9600);
   // Lectura inicial
-  dist_ant_1 = leerUltrasonico(/*TRIGGER_PIN, ECHO_PIN*/sonar1);
-  dist_ant_2 = leerUltrasonico(/*TRIGGER_PIN_2, ECHO_PIN_2*/sonar2);
-  dist_ant_3 = leerUltrasonico(/*TRIGGER_PIN_3, ECHO_PIN_3*/sonar3);
+  dist_ant_1 = leerUltrasonico(sonar1, 10, 0);
+  dist_ant_2 = leerUltrasonico(sonar2, 10, 0);
+  dist_ant_3 = leerUltrasonico(sonar3, 10, 0);
 }
 
 void loop() {
   // Lectura actual
-  dist_act_1 = leerUltrasonico(/*TRIGGER_PIN, ECHO_PIN*/sonar1);
-  dist_act_2 = leerUltrasonico(/*TRIGGER_PIN_2, ECHO_PIN_2*/sonar2);
-  dist_act_3 = leerUltrasonico(/*TRIGGER_PIN_3, ECHO_PIN_3*/sonar3);
-  
+  digitalWrite(LED_3, HIGH);
+  dist_act_1 = leerUltrasonico(sonar1, 10, dist_ant_1);
+  dist_act_2 = leerUltrasonico(sonar2, 10, dist_ant_2);
+  dist_act_3 = leerUltrasonico(sonar3, 10, dist_ant_3);
+  digitalWrite(LED_3, LOW);
+
   // No aceptar valores nulos
   if (dist_act_1 != -1 and dist_act_2 != -1 and dist_act_3 != -1) {
-    if ( flag and (abs(dist_ant_1 - dist_act_1) > error) or (abs(dist_ant_2 - dist_act_2) > error) or (abs(dist_ant_3 - dist_act_3) > error)) {
-      //Serial.println("OBJETO CAIDO");
+    if (((abs(dist_ant_1 - dist_act_1) > error) and (dist_ant_1 > dist_act_1)) or ((abs(dist_ant_2 - dist_act_2) > error) and (dist_ant_2 > dist_act_2)) or ((abs(dist_ant_3 - dist_act_3) > error) and (dist_ant_3 > dist_act_3))) {
+      if (flag) {
+        String json = "{\"alerta\":" + String(1) + "}\n";
+        Serial.write(json.c_str());
+        delay(500);
 
-      String json = "{\"alerta\":" + String(1) + "}\n";
-      Serial.write(json.c_str());
-      delay(500);
+        int led = 1;
+        int buzzer = 1;
+        int cont = 0;
 
-      int led = -1;
-      int buzzer = -1;
-      int cont = 0;
+        if (Serial.available() > 0) {
+          String jsonString = Serial.readStringUntil('\n'); // Lee la cadena JSON hasta el salto de línea
+          jsonError = deserializeJson(jsonDocument, jsonString);
 
-      if (Serial.available() > 0) {
-        String jsonString = Serial.readStringUntil('\n'); // Lee la cadena JSON hasta el salto de línea
-        jsonError = deserializeJson(jsonDocument, jsonString);
-
-        if (jsonError) {
-          Serial.print("Error al parsear JSON: ");
-          Serial.println(jsonError.c_str());
-        } else {
-          buzzer = jsonDocument["sonido"].as<int>();
-          led = jsonDocument["led"].as<int>();
+          if (jsonError) {
+            Serial.print("Error al parsear JSON: ");
+            Serial.println(jsonError.c_str());
+          } else {
+            buzzer = jsonDocument["sonido"].as<int>();
+            led = jsonDocument["led"].as<int>();
+          }
         }
+        if (led == 1 and buzzer != 1) {
+          digitalWrite(LED_1, HIGH);
+          digitalWrite(LED_2, HIGH);
+          delay(1000);               // 10 s 
+          digitalWrite(LED_1, LOW);
+          digitalWrite(LED_2, LOW);
+        }
+        else if (led != 1 and buzzer == 1) {
+          digitalWrite(BUZZER, HIGH);
+          delay(3000);               // 30 s
+          digitalWrite(BUZZER, LOW);
+        }
+        else if (led == 1 and buzzer == 1) {
+          digitalWrite(LED_1, HIGH);
+          digitalWrite(LED_2, HIGH);
+          digitalWrite(BUZZER, HIGH);
+          delay(1000);               // 10 s
+          digitalWrite(LED_1, LOW);
+          digitalWrite(LED_2, LOW);
+          delay(2000);
+          digitalWrite(BUZZER, LOW);
+        }
+        flag = false;
       }
-      json = "{\"sonido\":" + String(buzzer) + ",\"led\":" + String(led) + "}\n";
-      Serial.write(json.c_str());
-
-      if (led == 1) {
-        digitalWrite(LED_1, HIGH);  
-        digitalWrite(LED_2, HIGH);
-        delay(10000);               // 10 s
-        digitalWrite(LED_1, LOW);
-        digitalWrite(LED_2, LOW);
-      }
-      if (buzzer == 1) {
-        digitalWrite(BUZZER, HIGH); 
-        delay(30000);               // 30 s
-        digitalWrite(BUZZER, LOW);
-      }
-
-      flag = false;
     }
     else {
       flag = true;
