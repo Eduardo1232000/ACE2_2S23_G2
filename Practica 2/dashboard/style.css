@@ -1,0 +1,90 @@
+.titulo_oxigeno{
+  position: absolute;
+  top: 0%;
+  left: 35%;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: bold;
+}
+.titulo_medida{
+  position: absolute;
+  top: 7%;
+  left: 41%;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+
+
+
+.grafico-oxigeno {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  position: absolute;
+  top: 20%;
+  left: 43%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  background: conic-gradient(
+    var(--color_grafica) 0% var(--porcentaje_oxigeno, 0%),
+    lightgray var(--porcentaje_oxigeno, 0%) 100%
+  );
+}
+.circulo-decoracion {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  position: absolute;
+  align-items: center;
+  background: #fff;
+}
+
+
+.valor_oxigeno {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  font-size: 40px;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+}
+.titulo {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+}
+
+#boton_tiempo_real {
+  background-color: white; /* Color de fondo */
+  color: black;            /* Color de texto */
+  font-size: 16px;           /* Tamaño de fuente */
+  padding: 10px 20px;        /* Relleno (padding) */
+  border: 1;                 /* Sin borde */
+  cursor: pointer;           /* Cambia el cursor al pasar sobre el botón */
+  position: absolute;
+  top: 20%;
+  left: 5%;
+}
+
+#boton_tiempo_historico {
+
+  background-color: white;  /* Color de fondo */
+  color: black;             /* Color de texto */
+  font-size: 16px;            /* Tamaño de fuente */
+  padding: 10px 20px;         /* Relleno (padding) */
+  border: 1;                  /* Sin borde */
+  cursor: pointer;            /* Cambia el cursor al pasar sobre el botón */
+  position: absolute;
+  top: 30%;
+  left: 5%;
+}
