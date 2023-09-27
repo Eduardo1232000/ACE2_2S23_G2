@@ -40,7 +40,7 @@ app.get("/informacion", async (req, res) => {
   try {
     const [results, fields] = await conexion.query(query);
 
-    res.json(results);
+    res.json(results[0]);
   } catch (error) {
     res.status(500).json({ code: 500, message: error });
   }
