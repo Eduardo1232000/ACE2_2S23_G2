@@ -46,6 +46,68 @@ app.get("/informacion", async (req, res) => {
   }
 });
 
+app.get("/informacion/:fecha_desde/:fecha_hasta", async (req, res) => {
+  const fecha_desde = req.params.fecha_desde;
+  const fecha_hasta = req.params.fecha_hasta;
+
+  const conexion = getConnection();
+  if (fecha_desde == fecha_hasta) {
+    try {
+      const sql = `SELECT DATE_FORMAT(fecha, '%H:00:00') AS hora, AVG(porcentaje) AS cantidad
+      FROM historialOxigeno c
+      WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+      GROUP BY DATE_FORMAT(fecha, '%H:00:00')
+      ORDER BY hora`;
+      const [results, fields] = await conexion.query(sql, [
+        fecha_desde,
+        fecha_hasta,
+      ]);
+
+      res.json({ success: true, info: formatearPorHora(results) });
+    } catch (error) {
+      res.status(500).json({ code: 500, message: error });
+    }
+  } else {
+    try {
+      const sql = `SELECT DATE_FORMAT(fecha, '%d/%m') AS dia, COUNT(fecha) AS cantidad
+      FROM historialOxigeno c
+      WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+      GROUP BY DATE_FORMAT(fecha, '%d/%m')
+      ORDER BY dia`;
+      const [results, fields] = await conexion.query(sql, [
+        fecha_desde,
+        fecha_hasta,
+      ]);
+
+      res.json({ success: true, info: results });
+    } catch (error) {
+      res.status(500).json({ code: 500, message: error });
+    }
+  }
+});
+
+function formatearPorHora(result) {
+  let data = [];
+  for (let i = 0; i < 24; i++) {
+    const valor = result.find((element) => element["hora"] === calcularHora(i));
+    if (valor === undefined) {
+      data.push(0);
+    } else {
+      data.push(valor.cantidad);
+    }
+  }
+  return data;
+}
+
+function calcularHora(multiplicador) {
+  const horas = Math.floor(multiplicador);
+  const minutos = (multiplicador - horas) * 60;
+  const segundos = minutos * 60;
+  return `${horas.toString().padStart(2, "0")}:${minutos
+    .toString()
+    .padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`;
+}
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Servidor iniciado (http://localhost:${port}/)`);
