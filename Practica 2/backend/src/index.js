@@ -69,7 +69,7 @@ app.get("/informacion/:fecha_desde/:fecha_hasta", async (req, res) => {
     }
   } else {
     try {
-      const sql = `SELECT DATE_FORMAT(fecha, '%d/%m') AS dia, COUNT(fecha) AS cantidad
+      const sql = `SELECT DATE_FORMAT(fecha, '%d/%m') AS dia, AVG(porcentaje) AS cantidad
       FROM historialOxigeno c
       WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY)
       GROUP BY DATE_FORMAT(fecha, '%d/%m')
