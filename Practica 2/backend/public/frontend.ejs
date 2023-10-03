@@ -127,7 +127,8 @@
     cambiar_temperatura(<%= data.porcentaje %>)
 
     setInterval(function(){
-        cambiar_temperatura(<%= data.porcentaje %>)
+        const result = await fetch("http://localhost:3000/informacion").then(response => response.json()).then(data => data);
+        cambiar_temperatura(<%= result.porcentaje %>)
     }, 3000);
   </script>
 </body>
