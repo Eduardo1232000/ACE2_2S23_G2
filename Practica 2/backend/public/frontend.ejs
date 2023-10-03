@@ -124,7 +124,11 @@
     });
       
 
-    cambiar_temperatura(96)
+    cambiar_temperatura(<%= data.porcentaje %>)
+
+    setInterval(function(){
+        cambiar_temperatura(<%= data.porcentaje %>)
+    }, 3000);
   </script>
 </body>
 </html>

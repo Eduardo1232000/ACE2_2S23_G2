@@ -29,8 +29,17 @@ app.use(morgan("dev"));
 const { getConnection } = require("./src/database");
 
 // Rutas
-app.get("/", (req, res) => {
-  res.render("frontend.ejs", { title: "TipeWize" });
+app.get("/", async (req, res) => {
+  try {
+    const result = await fetch("http://localhost:3000/informacion").then(response => response.json()).then(data => data);
+    console.log(result);
+
+    res.render('frontend.ejs', {
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({ code: 500, message: error });
+  }
 });
 
 app.post("/informacion", async (req, res) => {
