@@ -1,18 +1,36 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+
 const app = express();
 
-app.use(cors());
+// SETTINGS
+
+//process.env.PORT es por si se sube a la nube, ya que acepta el puerto que le dan
+app.set("port", process.env.PORT || 3000);
+var engine = require('consolidate');
+app.set('views', path.join(__dirname, 'public')); //LAS PAGINAS ESTAN EN VIEWS
+app.set('view engine', 'ejs');                      //SON ARCHIVOS .EJS
+
+//MIDDLEWARES
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, './public')));
+app.use(cors());
 app.use(morgan("dev"));
 
 // importe de libreria para la conexion a la base de datos
-const { getConnection } = require("./database");
+const { getConnection } = require("./src/database");
 
 // Rutas
 app.get("/", (req, res) => {
-  res.send("Arqui2 - S2");
+  res.render("frontend.ejs", { title: "TipeWize" });
 });
 
 app.post("/informacion", async (req, res) => {
