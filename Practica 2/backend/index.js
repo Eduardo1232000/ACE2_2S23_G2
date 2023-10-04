@@ -80,33 +80,28 @@ app.get("/informacion/:fecha_desde/:fecha_hasta", async (req, res) => {
   const conexion = getConnection();
   if (fecha_desde == fecha_hasta) {
     try {
-      const sql = `SELECT DATE_FORMAT(fecha, '%H:00:00') AS hora, AVG(porcentaje) AS cantidad
+      const sql = `SELECT DATE_FORMAT(fecha, '%H:00:00') AS hora, ROUND(AVG(porcentaje)) AS cantidad
       FROM historialOxigeno c
       WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY)
       GROUP BY DATE_FORMAT(fecha, '%H:00:00')
       ORDER BY hora`;
-      const [results, fields] = await conexion.query(sql, [
-        fecha_desde,
-        fecha_hasta,
-      ]);
-
-      res.json({ success: true, info: formatearPorHora(results) });
+      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta]);
+      res.json({ success: true, titulos_eje_x: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"], valores_eje_y: formatearPorHora(results) });
     } catch (error) {
       res.status(500).json({ code: 500, message: error });
     }
   } else {
     try {
-      const sql = `SELECT DATE_FORMAT(fecha, '%d/%m') AS dia, AVG(porcentaje) AS cantidad
+      const sql = `SELECT DATE_FORMAT(fecha, '%d/%m') AS dia, ROUND(AVG(porcentaje)) AS cantidad
       FROM historialOxigeno c
       WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY)
       GROUP BY DATE_FORMAT(fecha, '%d/%m')
       ORDER BY dia`;
-      const [results, fields] = await conexion.query(sql, [
-        fecha_desde,
-        fecha_hasta,
-      ]);
+      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta]);
 
-      res.json({ success: true, info: results });
+      const titulos_eje_x = results.map(item => item.dia);
+      const valores_eje_y = results.map(item => item.cantidad);
+      res.json({ success: true, titulos_eje_x: titulos_eje_x, valores_eje_y: valores_eje_y });
     } catch (error) {
       res.status(500).json({ code: 500, message: error });
     }

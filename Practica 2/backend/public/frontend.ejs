@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graficas</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <button type="button" id="boton_tiempo_real">Tiempo Real</button>
     <button type="button" id="boton_tiempo_historico">Historico</button>
@@ -28,108 +33,127 @@
             <canvas id="grafica_humedad_relativa"></canvas>
         </div>
         <div class="col" style="display: inline-block; margin-right: 10px;">
-            <form action="">
-                <label style="position: absolute; top: 300px; left: 100px; font-size: 25px;">Fecha inicio:</label><br>
-                <input type="date" style="position: absolute; top: 300px; left: 250px; width: 250px; height: 35px; border-radius: 8px; font-size: 20px;" /><br><br><br>
-                <label style="position: absolute; top: 375px; left: 100px; font-size: 25px;">Fecha fin:</label><br>
-                <input type="date" style="position: absolute; top: 375px; left: 250px; width: 250px; height: 35px; border-radius: 8px; font-size: 20px;" /><br><br><br>
-                <input type="submit" value="Consultar" style="position: absolute; top: 450px; left: 175px; font-size: 23px; border-radius: 8px; width: 250px; height: 40px; background-color: rgb(125, 227, 144);"/>
-            </form>
+            <label style="position: absolute; top: 300px; left: 100px; font-size: 25px;">Fecha inicio:</label><br>
+            <input type="date" id="txtFechaInicial"
+                style="position: absolute; top: 300px; left: 250px; width: 250px; height: 35px; border-radius: 8px; font-size: 20px;" /><br><br><br>
+            <label style="position: absolute; top: 375px; left: 100px; font-size: 25px;">Fecha fin:</label><br>
+            <input type="date" id="txtFechaFinal"
+                style="position: absolute; top: 375px; left: 250px; width: 250px; height: 35px; border-radius: 8px; font-size: 20px;" /><br><br><br>
+            <input type="submit" value="Consultar" id="btnConsultar"
+                style="position: absolute; top: 450px; left: 175px; font-size: 23px; border-radius: 8px; width: 250px; height: 40px; background-color: rgb(125, 227, 144);" />
         </div>
     </div>
 
-  
-  <script>
-    
-    document.getElementById("boton_tiempo_real").style.backgroundColor = "#BEEDC7";
-    document.getElementById("vista_historica").style.display = "none";
-    //BOTON TIEMPO REAL
-    document.getElementById("boton_tiempo_real").addEventListener("click", function (event) {
-        document.getElementById("vista_historica").style.display = "none";
-        document.getElementById("vista_tiempo_real").style.display = "block";
-        document.getElementById("boton_tiempo_historico").style.backgroundColor = "white";
+    <script>
+
         document.getElementById("boton_tiempo_real").style.backgroundColor = "#BEEDC7";
-    });
-    //BOTON HISTORICO
-    document.getElementById("boton_tiempo_historico").addEventListener("click", function (event) {
-        document.getElementById("vista_historica").style.display = "block";
-        document.getElementById("vista_tiempo_real").style.display = "none";
-        document.getElementById("boton_tiempo_historico").style.backgroundColor = "#BEEDC7";
-        document.getElementById("boton_tiempo_real").style.backgroundColor = "white";
-    });
-    
-    // FUNCION PARA CAMBIAR EL PORCENTAJE DE LA TABLA
-    function cambiar_temperatura(nuevoPorcentaje) {
-      const grafico_temp = document.querySelector('.grafico-oxigeno');
-      grafico_temp.style.setProperty('--porcentaje_oxigeno', (nuevoPorcentaje ) + '%');  
-      document.querySelector('.valor_oxigeno').textContent = nuevoPorcentaje + '%';
-      //CAMBIO DE COLOR
-      if(nuevoPorcentaje >=96){
-        grafico_temp.style.setProperty('--color_grafica',("#04FF00")) //VERDE
-      }
-      else if (nuevoPorcentaje == 95){
-        grafico_temp.style.setProperty('--color_grafica',("#0051FF")) //AZUL
-      }
-      else{
-        grafico_temp.style.setProperty('--color_grafica',("#FF0000")) //ROJO
-      }
-    }
+        document.getElementById("vista_historica").style.display = "none";
+        //BOTON TIEMPO REAL
+        document.getElementById("boton_tiempo_real").addEventListener("click", function (event) {
+            document.getElementById("vista_historica").style.display = "none";
+            document.getElementById("vista_tiempo_real").style.display = "block";
+            document.getElementById("boton_tiempo_historico").style.backgroundColor = "white";
+            document.getElementById("boton_tiempo_real").style.backgroundColor = "#BEEDC7";
+        });
+        //BOTON HISTORICO
+        document.getElementById("boton_tiempo_historico").addEventListener("click", function (event) {
+            document.getElementById("vista_historica").style.display = "block";
+            document.getElementById("vista_tiempo_real").style.display = "none";
+            document.getElementById("boton_tiempo_historico").style.backgroundColor = "#BEEDC7";
+            document.getElementById("boton_tiempo_real").style.backgroundColor = "white";
+        });
+        //BOTON CONSULTAR
+        document.getElementById("btnConsultar").addEventListener("click", function (event) {
+            let fecha_inicial = document.getElementById("txtFechaInicial").value;
+            let fecha_final = document.getElementById("txtFechaFinal").value;
+            fetch("http://localhost:3000/informacion/" + fecha_inicial + "/" + fecha_final)
+                .then((response) => response.json())
+                .then((data) => {
+                    mostrar_grafico_historico(data.titulos_eje_x, data.valores_eje_y);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        });
 
-    const graf_hum_rel = document.getElementById("grafica_humedad_relativa");
-    var ejey_hum_rel    = [10, 10, 20, 36, 80, 40, 30, 20, 25, 30, 12, 60];
+        // FUNCION PARA CAMBIAR EL PORCENTAJE DE LA TABLA
+        function cambiar_saturacion_oxigeno(nuevoPorcentaje) {
+            const grafico_temp = document.querySelector('.grafico-oxigeno');
+            grafico_temp.style.setProperty('--porcentaje_oxigeno', (nuevoPorcentaje) + '%');
+            document.querySelector('.valor_oxigeno').textContent = nuevoPorcentaje + '%';
+            //CAMBIO DE COLOR
+            if (nuevoPorcentaje >= 96) {
+                grafico_temp.style.setProperty('--color_grafica', ("#04FF00")) //VERDE
+            }
+            else if (nuevoPorcentaje == 95) {
+                grafico_temp.style.setProperty('--color_grafica', ("#0051FF")) //AZUL
+            }
+            else {
+                grafico_temp.style.setProperty('--color_grafica', ("#FF0000")) //ROJO
+            }
+        }
 
-    //EJE X ES SOLO 1 PORQUE DEPENDE DE LA FECHA 
-    var ejeX = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+        function mostrar_grafico_historico(titulos_eje_x, valores_hum_eje_y) {
 
-    new Chart(graf_hum_rel, {
-        type: "line",
-        data: {
-            labels: ejeX,
-            datasets: [
-                {
-                    label: "Humedad Relativa",
-                    data: ejey_hum_rel,
-                    tension: 0.5,
-                    borderColor: 'rgb(75, 148, 227)',
-                    pointBackgroundColor: 'rgba(75, 148, 227)',
+            const graf_hum_rel = document.getElementById("grafica_humedad_relativa");
+
+            // Destruir el gráfico existente si hay uno
+            const existingChart = Chart.getChart(graf_hum_rel);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            // Construir el grafico
+            new Chart(graf_hum_rel, {
+                type: "line",
+                data: {
+                    labels: titulos_eje_x,
+                    datasets: [
+                        {
+                            label: "Saturación oxígeno",
+                            data: valores_hum_eje_y,
+                            tension: 0.5,
+                            borderColor: 'rgb(75, 148, 227)',
+                            pointBackgroundColor: 'rgba(75, 148, 227)',
+                        },
+                    ],
                 },
-            ],
-        },
-        options: {
-            plugins: {
-                
-                title: {
-                    display: true,
-                    text: 'Humedad Relativa',
-                    font: {
-                        size: 24 // Cambia el tamaño del título aquí
-                    }
-                }
-            },
-            scales: {
-                y : {
-                    min : 0,
-                    grid:{
-                        display:false
-                    }
+                options: {
+                    plugins: {
+
+                        title: {
+                            display: true,
+                            text: 'Saturación oxígeno',
+                            font: {
+                                size: 24 // Cambia el tamaño del título aquí
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            ticks: { color: 'rgb(10, 10, 10)' },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
                 },
-                x: {
-                    ticks: { color: 'rgb(10, 10, 10)'},
-                    grid:{
-                        display:false
-                    }
-                }
-            },
-        },
-    });
-      
+            });
+        }
 
-    cambiar_temperatura(<%= data.porcentaje %>)
+        cambiar_saturacion_oxigeno(<%= data.porcentaje %>)
 
-    setInterval(async function(){
-        const result = await fetch("http://35.221.7.73:3000/informacion").then(response => response.json()).then(data => data);
-        cambiar_temperatura(result.porcentaje)
-    }, 3000);
-  </script>
+        setInterval(async function () {
+            const result = await fetch("http://35.221.7.73:3000/informacion").then(response => response.json()).then(data => data);
+            cambiar_saturacion_oxigeno(result.porcentaje)
+        }, 3000);
+    </script>
 </body>
+
 </html>
