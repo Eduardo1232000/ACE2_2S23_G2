@@ -44,7 +44,7 @@ void loop() {
       int spo2 = pox.getSpO2();
 
       // Verificar si las lecturas son válidas y han cambiado
-      if (heartRate > 0 && spo2 > 0 && spo2 >= 100) {
+      if (heartRate > 0 && spo2 > 0 && spo2 <= 100) {
           //Serial.print("Frecuencia Cardíaca: ");
           //Serial.print(heartRate);
           //Serial.print(" bpm / Nivel de Oxígeno en Sangre: ");
