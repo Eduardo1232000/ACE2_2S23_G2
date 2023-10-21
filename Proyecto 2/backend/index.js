@@ -46,11 +46,13 @@ app.post("/informacion", async (req, res) => {
   const data = req.body;
   const conexion = getConnection();
   const fecha = new Date();
-  const query = `INSERT INTO historialOxigeno(porcentaje, fecha) VALUES (?,?);`;
+  const query = `INSERT INTO historialOxigeno(porcentaje,frecuencia,usuario,fecha) VALUES (?,?,?,?);`;
 
   try {
     const [result, fields] = await conexion.query(query, [
       data.porcentaje,
+      data.frecuencia,
+      data.usuario,
       fecha,
     ]);
 
@@ -105,6 +107,55 @@ app.get("/informacion/:fecha_desde/:fecha_hasta", async (req, res) => {
     } catch (error) {
       res.status(500).json({ code: 500, message: error });
     }
+  }
+});
+
+app.post("/registrar", async (req, res) => {
+  const data = req.body;
+  const conexion = getConnection();
+  const query = `INSERT INTO usuario VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+
+  try {
+    const [result, fields] = await conexion.query(query, [
+      data.usuario,
+      data.nombre,
+      data.pass,
+      data.edad,
+      data.altura,
+      data.peso,
+      data.diabetes,
+      data.cardiovascular,
+      data.pulmonar,
+      data.autoinmune,
+      data.horarioSue
+    ]);
+
+    if (fields.affectedRows == 0) {
+      res.json({ code: 500, message: "No se pudo registrar" });
+    }
+
+    res.json({ code: 200, message: "Registro exitoso" });
+  } catch (error) {
+    res.status(500).json({ code: 500, message: error });
+  }
+});
+
+app.get("/login/:usuario/:pass", async (req, res) => {
+  const datos = req.params;
+
+  const conexion = getConnection();
+
+  try {
+    const sql = `SELECT * FROM usuario WHERE usuario = ? AND pass = ?`;
+    const [results, fields] = await conexion.query(sql, [datos.usuario, datos.pass]);
+
+    if (results.length > 0) {
+      res.json({ success: true, usuario: results[0] });
+    } else {
+      res.json({ success: false, message: "Usuario o contraseña incorrecta" });
+    }
+  } catch (error) {
+    res.status(500).json({ code: 500, message: error });
   }
 });
 

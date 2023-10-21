@@ -26,8 +26,12 @@ peso float(2),
 diabetes bool,
 cardiovascular bool,
 pulmonar bool,
-autoinmune bool
+autoinmune bool,
+horarioSue int,
+foreign key (horarioSue) references horarioSue(id)
 );
+
+insert into usuario values('root','root','admin1234',50,1.70,150,0,0,0,0,1);
 
 drop table if exists historialOxigeno;
 create table if not exists historialOxigeno(
