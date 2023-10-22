@@ -38,6 +38,7 @@ create table if not exists historialOxigeno(
 id int primary key auto_increment,
 porcentaje int,
 frecuencia int,
-usuario int,
-fecha datetime
+usuario varchar(20),
+fecha datetime,
+foreign key (usuario) references usuario(usuario)
 );

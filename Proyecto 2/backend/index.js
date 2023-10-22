@@ -62,12 +62,14 @@ app.post("/informacion", async (req, res) => {
   }
 });
 
-app.get("/informacion", async (req, res) => {
+app.get("/informacion/:usuario", async (req, res) => {
+  const data = req.params;
+
   const conexion = getConnection();
-  const query = `SELECT * FROM historialOxigeno ORDER BY id DESC LIMIT 1;`;
+  const query = `SELECT * FROM historialOxigeno WHERE usuario = ?  ORDER BY id DESC LIMIT 1;`;
 
   try {
-    const [results, fields] = await conexion.query(query);
+    const [results, fields] = await conexion.query(query, [data.usuario]);
 
     res.json(results[0]);
   } catch (error) {
@@ -75,35 +77,38 @@ app.get("/informacion", async (req, res) => {
   }
 });
 
-app.get("/informacion/:fecha_desde/:fecha_hasta", async (req, res) => {
+app.get("/informacion/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
   const fecha_desde = req.params.fecha_desde;
   const fecha_hasta = req.params.fecha_hasta;
+  const usuario = req.params.usuario;
 
   const conexion = getConnection();
   if (fecha_desde == fecha_hasta) {
     try {
-      const sql = `SELECT DATE_FORMAT(fecha, '%H:00:00') AS hora, ROUND(AVG(porcentaje)) AS cantidad
+      const sql = `SELECT DATE_FORMAT(fecha, '%H:00:00') AS hora, ROUND(AVG(porcentaje)) AS cantidad, ROUND(AVG(frecuencia)) AS cantidadf
       FROM historialOxigeno c
-      WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+      WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY) and c.usuario = ?
       GROUP BY DATE_FORMAT(fecha, '%H:00:00')
       ORDER BY hora`;
-      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta]);
-      res.json({ success: true, titulos_eje_x: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"], valores_eje_y: formatearPorHora(results) });
+      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, usuario]);
+      const [valores_eje_y, valores_eje_y_f] = formatearPorHora(results);
+      res.json({ success: true, titulos_eje_x: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"], valores_eje_y: valores_eje_y, valores_eje_y_f: valores_eje_y_f });
     } catch (error) {
       res.status(500).json({ code: 500, message: error });
     }
   } else {
     try {
-      const sql = `SELECT DATE_FORMAT(fecha, '%d/%m') AS dia, ROUND(AVG(porcentaje)) AS cantidad
+      const sql = `SELECT DATE_FORMAT(fecha, '%d/%m') AS dia, ROUND(AVG(porcentaje)) AS cantidad, ROUND(AVG(frecuencia)) AS cantidadf
       FROM historialOxigeno c
-      WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+      WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY) and c.usuario = ?
       GROUP BY DATE_FORMAT(fecha, '%d/%m')
       ORDER BY dia`;
-      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta]);
+      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, usuario]);
 
       const titulos_eje_x = results.map(item => item.dia);
       const valores_eje_y = results.map(item => item.cantidad);
-      res.json({ success: true, titulos_eje_x: titulos_eje_x, valores_eje_y: valores_eje_y });
+      const valores_eje_y_f = results.map(item => item.cantidadf);
+      res.json({ success: true, titulos_eje_x: titulos_eje_x, valores_eje_y: valores_eje_y, valores_eje_y_f: valores_eje_y_f });
     } catch (error) {
       res.status(500).json({ code: 500, message: error });
     }
@@ -150,9 +155,10 @@ app.get("/login/:usuario/:pass", async (req, res) => {
     const [results, fields] = await conexion.query(sql, [datos.usuario, datos.pass]);
 
     if (results.length > 0) {
-      res.json({ success: true, usuario: results[0] });
+      console.log(results[0])
+      res.json({ code: 200, usuario: results[0] });
     } else {
-      res.json({ success: false, message: "Usuario o contraseña incorrecta" });
+      res.status(500).json({ code: 500, message: "Usuario o contraseña incorrecta" });
     }
   } catch (error) {
     res.status(500).json({ code: 500, message: error });
@@ -161,15 +167,17 @@ app.get("/login/:usuario/:pass", async (req, res) => {
 
 function formatearPorHora(result) {
   let data = [];
+  let data2 = [];
   for (let i = 0; i < 24; i++) {
     const valor = result.find((element) => element["hora"] === calcularHora(i));
     if (valor === undefined) {
       data.push(0);
     } else {
       data.push(valor.cantidad);
+      data2.push(valor.cantidadf);
     }
   }
-  return data;
+  return data, data2;
 }
 
 function calcularHora(multiplicador) {
