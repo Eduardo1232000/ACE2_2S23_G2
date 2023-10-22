@@ -2,7 +2,7 @@ drop database if exists arqui2practica2;
 create database if not exists arqui2practica2;
 use arqui2practica2;
 
-drop table if exists horarieSue; 
+drop table if exists horarioSue; 
 create table horarioSue(
 id int primary key,
 dia varchar(10),
