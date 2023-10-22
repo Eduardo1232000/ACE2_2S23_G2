@@ -130,8 +130,8 @@ app.post("/registrar", async (req, res) => {
       data.horarioSue
     ]);
 
-    if (fields.affectedRows == 0) {
-      res.json({ code: 500, message: "No se pudo registrar" });
+    if (result.affectedRows == 0) {
+      res.status(500).json({ code: 500, message: "No se pudo registrar" });
     }
 
     res.json({ code: 200, message: "Registro exitoso" });
