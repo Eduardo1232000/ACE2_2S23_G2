@@ -17,7 +17,7 @@
 #boton_vistas_nav{             /*NAV DEL FRONT*/
   position: absolute;
   top: 0%;
-  left: 75%;
+  left: 65%;
   width: 150px;
   font-size: 25px;
   border-radius: 12px;
@@ -27,13 +27,26 @@
 #boton_registro_nav{             /*NAV DEL FRONT*/
   position: absolute;
   top: 0%;
-  left: 85%;
+  left: 75%;
   width: 150px;
   font-size: 25px;
   border-radius: 12px;
   color: #fff;
   background-color: rgb(60, 81, 109);
 }
+
+#boton_login_nav{             /*NAV DEL FRONT*/
+  position: absolute;
+  top: 0%;
+  left: 85%;
+  width: 150px;
+  height: 43px;
+  font-size: 20px;
+  border-radius: 12px;
+  color: #fff;
+  background-color: rgb(60, 81, 109);
+}
+
 
 #boton_tiempo_real {      /*BOTON PARA CAMBIAR A VISTA DE TIEMPO REAL*/
   background-color: white; /* Color de fondo */
@@ -303,4 +316,58 @@
   border-radius: 10px;
   background-color: #609BB0;
   color: #fff;
+}
+
+/*---------------------- VISTA LOGIN -------------------------*/
+#titulo_login{
+  position: absolute;
+  top: 10%;
+  left: 41%;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: bold;
+}
+#login_texto_usuario{
+  position: absolute;
+  top: 34%;
+  left: 40%;
+  width: 300px;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  border-radius: 10px;
+}
+#login_texto_password{
+  position: absolute;
+  top: 44%;
+  left: 40%;
+  width: 300px;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  border-radius: 10px;
+}
+
+#boton_login{
+  position: absolute;
+  top: 54%;
+  left: 44%;
+  width: 170px;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border-radius: 10px;
+  background-color: #86d986;
+  font-weight: bold;
+}
+
+#cuadro_fondo{
+  position: absolute;
+  top: 7%;
+  left: 33%;
+  width: 510px;
+  height: 500px;
+  border-radius: 10px;
+  background-color: #dcdcdc;
 }

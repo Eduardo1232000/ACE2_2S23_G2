@@ -19,8 +19,16 @@
         <label id="titulo_nav"> Proyecto 2 </label>
         <button id="boton_vistas_nav">Vistas</button>
         <button id="boton_registro_nav">Registro</button>
+        <button id="boton_login_nav">Iniciar Sesion</button>
     </nav>
+    <div id="login_dash">
+        <div id="cuadro_fondo"></div>
+        <label id="titulo_login">Iniciar Sesion</label>
+        <input id="login_texto_usuario" placeholder="Usuario"></input>
+        <input type="password" id="login_texto_password" placeholder="Contraseña"></input>
+        <button id="boton_login"> Iniciar Sesion</button>
 
+    </div>
     <div id="registro">
         <label id="titulo_registro">Registro de Usuario</label>
         <input id="registro_texto_nombre" placeholder="Nombre"></input>
@@ -125,26 +133,49 @@
 
         document.getElementById("vistas").style.display = "block";
         document.getElementById("registro").style.display = "none";
+        document.getElementById("login_dash").style.display = "none";
 
         document.getElementById("boton_tiempo_real").style.backgroundColor = "#BEEDC7";
         document.getElementById("vista_historica").style.display = "none";
         document.getElementById("boton_vistas_nav").style.backgroundColor = "#609BB0";
-        //BOTON VISTAS
+       //BOTON VISTAS
         document.getElementById("boton_vistas_nav").addEventListener("click", function (event) {
             document.getElementById("boton_vistas_nav").style.backgroundColor = "#609BB0";
             document.getElementById("boton_registro_nav").style.backgroundColor = "#3C516D";
+            document.getElementById("boton_login_nav").style.backgroundColor = "#3C516D";
             document.getElementById("vistas").style.display = "block";
             document.getElementById("registro").style.display = "none";
+            document.getElementById("login_dash").style.display = "none";
         });
 
         //BOTON REGISTRO
         document.getElementById("boton_registro_nav").addEventListener("click", function (event) {
             document.getElementById("boton_vistas_nav").style.backgroundColor = "#3C516D";
             document.getElementById("boton_registro_nav").style.backgroundColor = "#609BB0";
+            document.getElementById("boton_login_nav").style.backgroundColor = "#3C516D";
             document.getElementById("vistas").style.display = "none";
             document.getElementById("registro").style.display = "block";
+            document.getElementById("login_dash").style.display = "none";
         });
-
+        //BOTON LOGIN
+        document.getElementById("boton_login_nav").addEventListener("click", function (event) {
+            document.getElementById("boton_vistas_nav").style.backgroundColor = "#3C516D";
+            document.getElementById("boton_registro_nav").style.backgroundColor = "#3C516D";
+            document.getElementById("boton_login_nav").style.backgroundColor = "#609BB0";
+            document.getElementById("vistas").style.display = "none";
+            document.getElementById("registro").style.display = "none";
+            document.getElementById("login_dash").style.display = "block";
+        });
+        //BOTON LOGIN USUARIO
+        document.getElementById("boton_login").addEventListener("click", function (event) {
+            
+            let usuario_login = document.getElementById("login_texto_usuario").value
+            let password_login = document.getElementById("login_texto_password").value
+            
+            //HACER LOGIN
+            
+            //
+        });
         //BOTON REGISTRAR  USUARIO
         document.getElementById("boton_registrar").addEventListener("click", function (event) {
             let nombre = document.getElementById("registro_texto_nombre").value
@@ -160,6 +191,8 @@
             let horario_sueno = document.getElementById("horarios_sueno_select").value
 
             //GUARDARLO EN LA BASE DE DATOS
+
+            //
         });
 
         //BOTON TIEMPO REAL
