@@ -91,8 +91,8 @@ app.get("/informacion/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
       GROUP BY DATE_FORMAT(fecha, '%H:00:00')
       ORDER BY hora`;
       const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, usuario]);
-      const [valores_eje_y, valores_eje_y_f] = formatearPorHora(results);
-      res.json({ success: true, titulos_eje_x: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"], valores_eje_y: valores_eje_y, valores_eje_y_f: valores_eje_y_f });
+      const [data, data2] = formatearPorHora(results);
+      res.json({ success: true, titulos_eje_x: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"], valores_eje_y: data, valores_eje_y_f: data2 });
     } catch (error) {
       res.status(500).json({ code: 500, message: error });
     }
@@ -172,12 +172,13 @@ function formatearPorHora(result) {
     const valor = result.find((element) => element["hora"] === calcularHora(i));
     if (valor === undefined) {
       data.push(0);
+      data2.push(0);
     } else {
       data.push(valor.cantidad);
       data2.push(valor.cantidadf);
     }
   }
-  return data, data2;
+  return [data, data2];
 }
 
 function calcularHora(multiplicador) {
