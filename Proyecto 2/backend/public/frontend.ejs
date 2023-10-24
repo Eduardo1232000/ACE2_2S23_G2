@@ -326,11 +326,11 @@
 
             //CAMBIO DE COLOR
             if (nuevoPorcentaje >= 100) {                                                                            //CARDIACO MAYOR IGUAL A 100
-                grafico_cardiaco.style.setProperty('--color_grafica_cardiaco', ("#FF0000")) //ROJO
+                grafico_temp.style.setProperty('--color_grafica_cardiaco', ("#FF0000")) //ROJO
             } else if (nuevoPorcentaje >= 61 && nuevoPorcentaje <= 99) {                                                 //CARDIACO ENTRE 61 Y 99
-                grafico_cardiaco.style.setProperty('--color_grafica_cardiaco', ("#04FF00")) //VERDE
+                grafico_temp.style.setProperty('--color_grafica_cardiaco', ("#04FF00")) //VERDE
             } else {                                                                                               //CARDIACO MENOR IGUAL A 60
-                grafico_cardiaco.style.setProperty('--color_grafica_cardiaco', ("#FF0000")) //ROJO
+                grafico_temp.style.setProperty('--color_grafica_cardiaco', ("#FF0000")) //ROJO
             }
 
         }
@@ -486,101 +486,101 @@
         }
 
 
-        //CREAR GRAFICA DE ACTIVIDAD FISICA LINEAL
-        const graf_lineal_actividad = document.getElementById("grafica_lineal_actividad");
-        var ejey_tiempo_Real = [100, 90, 95, 80, 105, 70, 69, 99, 100, 105]; //CAMBIAR DATOS POR LOS NUEVOS
-        var ejeX_tiempo_Real = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] //NO TOCARLO, SOLO ES PARA QUE MUESTRE 10 DATOS
-        var colores_actividad_fisica = ["orange", "red", "blue", "green", "green", "blue", "orange", "orange", "red", "blue"]   //CAMBIAR POR LOS COLORES DE CADA DATO
-        new Chart(graf_lineal_actividad, {
-            type: "line",
-            data: {
-                labels: ejeX_tiempo_Real,
-                datasets: [
-                    {
-                        label: "Actividad Fisica",
-                        data: ejey_tiempo_Real,
-                        tension: 0.5,
-                        borderColor: "transparent",
-                        pointBackgroundColor: colores_actividad_fisica,
-                        fill: 'start',
+        // //CREAR GRAFICA DE ACTIVIDAD FISICA LINEAL
+        // const graf_lineal_actividad = document.getElementById("grafica_lineal_actividad");
+        // var ejey_tiempo_Real = [100, 90, 95, 80, 105, 70, 69, 99, 100, 105]; //CAMBIAR DATOS POR LOS NUEVOS
+        // var ejeX_tiempo_Real = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] //NO TOCARLO, SOLO ES PARA QUE MUESTRE 10 DATOS
+        // var colores_actividad_fisica = ["orange", "red", "blue", "green", "green", "blue", "orange", "orange", "red", "blue"]   //CAMBIAR POR LOS COLORES DE CADA DATO
+        // new Chart(graf_lineal_actividad, {
+        //     type: "line",
+        //     data: {
+        //         labels: ejeX_tiempo_Real,
+        //         datasets: [
+        //             {
+        //                 label: "Actividad Fisica",
+        //                 data: ejey_tiempo_Real,
+        //                 tension: 0.5,
+        //                 borderColor: "transparent",
+        //                 pointBackgroundColor: colores_actividad_fisica,
+        //                 fill: 'start',
 
-                    },
-                ],
-            },
-            options: {
-                plugins: {
+        //             },
+        //         ],
+        //     },
+        //     options: {
+        //         plugins: {
 
-                    title: {
-                        display: true,
-                        text: 'Actividad Fisica',
-                        font: {
-                            size: 24 // Cambia el tamaño del título aquí
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        min: 0,
-                        grid: {
-                            display: false
-                        }
-                    },
-                    x: {
-                        ticks: { color: 'rgb(10, 10, 10)' },
-                        grid: {
-                            display: false
-                        }
-                    }
-                },
-            },
-        });
+        //             title: {
+        //                 display: true,
+        //                 text: 'Actividad Fisica',
+        //                 font: {
+        //                     size: 24 // Cambia el tamaño del título aquí
+        //                 }
+        //             }
+        //         },
+        //         scales: {
+        //             y: {
+        //                 min: 0,
+        //                 grid: {
+        //                     display: false
+        //                 }
+        //             },
+        //             x: {
+        //                 ticks: { color: 'rgb(10, 10, 10)' },
+        //                 grid: {
+        //                     display: false
+        //                 }
+        //             }
+        //         },
+        //     },
+        // });
 
-        //CREAR GRAFICA DE ACTIVIDAD FISICA ACUMULADA (BARRAS)
-        const graf_barras_actividad = document.getElementById("grafica_barras_actividad");
-        var ejey_actividad_fisica_acum = [10, 20, 30, 40];   //CAMBIAR LOS DATOS POR LOS DE LA BASE
-        var ejeX_actividad_fisica = ["Actividad Fisica Inteso", "Actividad fisica normal", "Sin actividad fisica o reposo", "Irregularidad sueño"]
-        new Chart(graf_barras_actividad, {
-            type: "bar",
-            data: {
-                labels: ejeX_actividad_fisica,
-                datasets: [
-                    {
-                        label: "Actividad Fisica",
-                        data: ejey_actividad_fisica_acum,
-                        tension: 0.5,
-                        backgroundColor: [
-                            'orange', 'green', 'blue', 'red' // Colores para cada segmento de la línea
-                        ],
-                    },
-                ],
-            },
-            options: {
-                plugins: {
+        // //CREAR GRAFICA DE ACTIVIDAD FISICA ACUMULADA (BARRAS)
+        // const graf_barras_actividad = document.getElementById("grafica_barras_actividad");
+        // var ejey_actividad_fisica_acum = [10, 20, 30, 40];   //CAMBIAR LOS DATOS POR LOS DE LA BASE
+        // var ejeX_actividad_fisica = ["Actividad Fisica Inteso", "Actividad fisica normal", "Sin actividad fisica o reposo", "Irregularidad sueño"]
+        // new Chart(graf_barras_actividad, {
+        //     type: "bar",
+        //     data: {
+        //         labels: ejeX_actividad_fisica,
+        //         datasets: [
+        //             {
+        //                 label: "Actividad Fisica",
+        //                 data: ejey_actividad_fisica_acum,
+        //                 tension: 0.5,
+        //                 backgroundColor: [
+        //                     'orange', 'green', 'blue', 'red' // Colores para cada segmento de la línea
+        //                 ],
+        //             },
+        //         ],
+        //     },
+        //     options: {
+        //         plugins: {
 
-                    title: {
-                        display: true,
-                        text: 'Actividad Fisica',
-                        font: {
-                            size: 24 // Cambia el tamaño del título aquí
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        min: 0,
-                        grid: {
-                            display: false
-                        }
-                    },
-                    x: {
-                        ticks: { color: 'rgb(10, 10, 10)' },
-                        grid: {
-                            display: false
-                        }
-                    }
-                },
-            },
-        });
+        //             title: {
+        //                 display: true,
+        //                 text: 'Actividad Fisica',
+        //                 font: {
+        //                     size: 24 // Cambia el tamaño del título aquí
+        //                 }
+        //             }
+        //         },
+        //         scales: {
+        //             y: {
+        //                 min: 0,
+        //                 grid: {
+        //                     display: false
+        //                 }
+        //             },
+        //             x: {
+        //                 ticks: { color: 'rgb(10, 10, 10)' },
+        //                 grid: {
+        //                     display: false
+        //                 }
+        //             }
+        //         },
+        //     },
+        // });
 
         //CREAR GRAFICA DE 10 DIAS MAS ACTIVOS DE MAYOR A MENOR
         // const graf_mayor_menor = document.getElementById("grafica_dias_mayor_menor");
@@ -692,40 +692,43 @@
         //     },
         // });
 
-        //EJEMPLO DE USO CREAR TABLA
-        contenedor_reporte1 = document.getElementById("lista_actividades")
-        let encabezados1 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'  //ENCABEZADOS
-        let tamanos1 = '15%,12%,12%,12%,12%,12%,12%,12%'                                                                //TAMAÑOS % DE ENCABEZADO
-        let datos = 'user1,1,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'                                     //DATOS SEPARADOS POR "," Y ENTRE FILAS POR ";"
-        datos += 'user2,2,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,si;'
-        datos += 'user3,3,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'                                        //BORRAR CUANDO NO SE USE
-        datos += 'user4,4,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos += 'user5,5,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos += 'user6,6,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos += 'user7,7,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos += 'user8,8,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos += 'user9,9,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos += 'user10,10,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos += 'user11,11,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        crear_tabla(contenedor_reporte1, datos, encabezados1, tamanos1)
+        // //EJEMPLO DE USO CREAR TABLA
+        // contenedor_reporte1 = document.getElementById("lista_actividades")
+        // let encabezados1 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'  //ENCABEZADOS
+        // let tamanos1 = '15%,12%,12%,12%,12%,12%,12%,12%'                                                                //TAMAÑOS % DE ENCABEZADO
+        // let datos = 'user1,1,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'                                     //DATOS SEPARADOS POR "," Y ENTRE FILAS POR ";"
+        // datos += 'user2,2,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,si;'
+        // datos += 'user3,3,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'                                        //BORRAR CUANDO NO SE USE
+        // datos += 'user4,4,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos += 'user5,5,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos += 'user6,6,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos += 'user7,7,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos += 'user8,8,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos += 'user9,9,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos += 'user10,10,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos += 'user11,11,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // crear_tabla(contenedor_reporte1, datos, encabezados1, tamanos1)
 
-        contenedor2 = document.getElementById("calendario_actividades")                                                  //MISMA FUNCION PARA OTRO REPORTE
-        let encabezados2 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'      //DEBE TENER EL MISMO NUMERO DE DATOS QUE ENCABEZADOS
-        let tamanos2 = '15%,12%,12%,12%,12%,12%,12%,12%'                                                                    //3 ENCABEZADOS = 3 DATOS POR FILA
-        let datos2 = 'user1,1,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos2 += 'user1,2,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,si;'
-        datos2 += 'user1,3,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos2 += 'user1,4,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        datos2 += 'user1,5,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no'
+        // contenedor2 = document.getElementById("calendario_actividades")                                                  //MISMA FUNCION PARA OTRO REPORTE
+        // let encabezados2 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'      //DEBE TENER EL MISMO NUMERO DE DATOS QUE ENCABEZADOS
+        // let tamanos2 = '15%,12%,12%,12%,12%,12%,12%,12%'                                                                    //3 ENCABEZADOS = 3 DATOS POR FILA
+        // let datos2 = 'user1,1,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos2 += 'user1,2,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,si;'
+        // datos2 += 'user1,3,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos2 += 'user1,4,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
+        // datos2 += 'user1,5,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no'
 
-        crear_tabla(contenedor2, datos2, encabezados2, tamanos2);
+        // crear_tabla(contenedor2, datos2, encabezados2, tamanos2);
 
-        // cambiar_saturacion_oxigeno(<= data.porcentaje %>)
+        setInterval(async function () {
 
-        // setInterval(async function () {
-        //     const result = await fetch("http://35.221.7.73:3000/informacion").then(response => response.json()).then(data => data);
-        //     cambiar_saturacion_oxigeno(result.porcentaje)
-        // }, 3000);
+            if (<%= logueado %>){
+            const result = await fetch('<%= ruta_request %>' + 'informacion').then(response => response.json()).then(data => data);
+            cambiar_saturacion_oxigeno(result.porcentaje);
+            cambiar_ritmo_cardiaco(result.frecuencia);
+        }
+
+        }, 3000);
     </script>
 </body>
 

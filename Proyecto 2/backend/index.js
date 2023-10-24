@@ -28,13 +28,15 @@ app.use(morgan("dev"));
 // importe de libreria para la conexion a la base de datos
 const { getConnection } = require("./src/database");
 let estaLogueado = false;
+let data_usuario = [];
+const RUTA_REQUEST = 'http://localhost:3000/';
 
 // Rutas
 app.get("/", async (req, res) => {
   try {
     res.render('frontend.ejs', {
-      ruta_request: 'http://localhost:3000/',
-      logueado: estaLogueado,
+      ruta_request: RUTA_REQUEST,
+      logueado: estaLogueado
     });
   } catch (error) {
     res.status(500).json({ code: 500, message: error });
@@ -61,14 +63,13 @@ app.post("/informacion", async (req, res) => {
   }
 });
 
-app.get("/informacion/:usuario", async (req, res) => {
-  const data = req.params;
+app.get("/informacion", async (req, res) => {
 
   const conexion = getConnection();
   const query = `SELECT * FROM historialOxigeno WHERE usuario = ?  ORDER BY id DESC LIMIT 1;`;
 
   try {
-    const [results, fields] = await conexion.query(query, [data.usuario]);
+    const [results, fields] = await conexion.query(query, [data_usuario.usuario]);
 
     res.json(results[0]);
   } catch (error) {
@@ -76,7 +77,7 @@ app.get("/informacion/:usuario", async (req, res) => {
   }
 });
 
-app.get("/informacion/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
+app.get("/informacion/:fecha_desde/:fecha_hasta", async (req, res) => {
   const fecha_desde = req.params.fecha_desde;
   const fecha_hasta = req.params.fecha_hasta;
   const usuario = req.params.usuario;
@@ -89,7 +90,7 @@ app.get("/informacion/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
       WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY) and c.usuario = ?
       GROUP BY DATE_FORMAT(fecha, '%H:00:00')
       ORDER BY hora`;
-      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, usuario]);
+      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, data_usuario.usuario]);
       const [data, data2] = formatearPorHora(results);
       res.json({ success: true, titulos_eje_x: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"], valores_eje_y: data, valores_eje_y_f: data2 });
     } catch (error) {
@@ -102,7 +103,7 @@ app.get("/informacion/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
       WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY) and c.usuario = ?
       GROUP BY DATE_FORMAT(fecha, '%d/%m')
       ORDER BY dia`;
-      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, usuario]);
+      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, data_usuario.usuario]);
 
       const titulos_eje_x = results.map(item => item.dia);
       const valores_eje_y = results.map(item => item.cantidad);
@@ -154,8 +155,9 @@ app.get("/login/:usuario/:pass", async (req, res) => {
     const [results, fields] = await conexion.query(sql, [datos.usuario, datos.pass]);
 
     if (results.length > 0) {
-      res.json({ code: 200, message: "¡Bienvenido!", usuario: results[0] });
+      res.json({ code: 200, message: "¡Bienvenido!" });
       estaLogueado = true;
+      data_usuario = results[0];
     } else {
       res.json({ code: 500, message: "Usuario o contraseña incorrecta" });
     }
