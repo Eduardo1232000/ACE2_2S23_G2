@@ -89,7 +89,7 @@
 
             <div
                 style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 150px; left: 700px;">
-                <canvas id="grafica_humedad_relativa"></canvas>
+                <canvas id="grafica_oxigeno"></canvas>
             </div>
 
             <div
@@ -292,10 +292,10 @@
         document.getElementById("btnConsultar").addEventListener("click", function (event) {
             let fecha_inicial = document.getElementById("txtFechaInicial").value;
             let fecha_final = document.getElementById("txtFechaFinal").value;
-            fetch("http://35.221.7.73:3000/informacion/" + fecha_inicial + "/" + fecha_final)
+            fetch('<%= ruta_request %>' + 'informacion' + '/' + fecha_inicial + "/" + fecha_final)
                 .then((response) => response.json())
                 .then((data) => {
-                    mostrar_grafico_historico(data.titulos_eje_x, data.valores_eje_y);
+                    mostrar_grafico_historico(data.titulos_eje_x, data.valores_eje_y, data.valores_eje_y_f);
                 })
                 .catch((error) => {
                     console.error("Error:", error);
@@ -335,78 +335,83 @@
 
         }
 
-        // Crear encabezado
-        function crear_encabezado(cabecera, titulo, porcentaje_tamano) {
-            const encabezado = document.createElement('th'); //COLUMNA 1
-            encabezado.textContent = titulo;
-            encabezado.style.width = porcentaje_tamano
-            encabezado.style.backgroundColor = "lightblue";
-            encabezado.style.border = "1px solid black";
-            encabezado.style.textAlign = "center"
-            cabecera.appendChild(encabezado);
-        }
+        // // Crear encabezado
+        // function crear_encabezado(cabecera, titulo, porcentaje_tamano) {
+        //     const encabezado = document.createElement('th'); //COLUMNA 1
+        //     encabezado.textContent = titulo;
+        //     encabezado.style.width = porcentaje_tamano
+        //     encabezado.style.backgroundColor = "lightblue";
+        //     encabezado.style.border = "1px solid black";
+        //     encabezado.style.textAlign = "center"
+        //     cabecera.appendChild(encabezado);
+        // }
 
-        function crear_tabla(contenedor, datos, encabezados, tamanos_encabezado) {
-            const tabla = document.createElement('table');          //CREAMOS LA TABLA
-            const cabecera = document.createElement('thead');       //CREAMOS LOS HEAD
-            const cabeceraFila = document.createElement('tr');      //NUEVA FILA
+        // function crear_tabla(contenedor, datos, encabezados, tamanos_encabezado) {
+        //     const tabla = document.createElement('table');          //CREAMOS LA TABLA
+        //     const cabecera = document.createElement('thead');       //CREAMOS LOS HEAD
+        //     const cabeceraFila = document.createElement('tr');      //NUEVA FILA
 
-            //CREAMOS CADA ENCABEZADO
-            let encabezado = encabezados.split(",");
-            let tamanos_enc = tamanos_encabezado.split(",");
-            for (var i = 0; i < encabezado.length; i++) {
-                crear_encabezado(cabeceraFila, encabezado[i], tamanos_enc[i]);
-            }
-            //AGREGAMOS EL CONTENIDO
-            const cuerpo = document.createElement('tbody');         //CONTENIDO DE LA TABLA (TBODY)
-            separado = datos.split(";")                             //SEPARAMOS LA CADENA POR CADA ";"
-            separado.forEach((fila) => {                            //RECORREMOS LA CADENA
-                const filaTabla = document.createElement('tr');     //NUEVA FILA
-                let datos_separados = fila.split(",")               //SEPARAMOS LA CADENA POR ","
-                datos_separados.forEach((val) => {                   //RECORREMOS LA CADENA NUEVA
-                    const td1 = document.createElement('td');       //CREAMOS LA CELDA
-                    let archivo_nombre = val
-                    td1.textContent = archivo_nombre;
-                    td1.style.width = "35%"
-                    td1.style.border = "1px solid black";
-                    filaTabla.appendChild(td1);                     //AGREGAMOS LA CELDA A LA FILA
+        //     //CREAMOS CADA ENCABEZADO
+        //     let encabezado = encabezados.split(",");
+        //     let tamanos_enc = tamanos_encabezado.split(",");
+        //     for (var i = 0; i < encabezado.length; i++) {
+        //         crear_encabezado(cabeceraFila, encabezado[i], tamanos_enc[i]);
+        //     }
+        //     //AGREGAMOS EL CONTENIDO
+        //     const cuerpo = document.createElement('tbody');         //CONTENIDO DE LA TABLA (TBODY)
+        //     separado = datos.split(";")                             //SEPARAMOS LA CADENA POR CADA ";"
+        //     separado.forEach((fila) => {                            //RECORREMOS LA CADENA
+        //         const filaTabla = document.createElement('tr');     //NUEVA FILA
+        //         let datos_separados = fila.split(",")               //SEPARAMOS LA CADENA POR ","
+        //         datos_separados.forEach((val) => {                   //RECORREMOS LA CADENA NUEVA
+        //             const td1 = document.createElement('td');       //CREAMOS LA CELDA
+        //             let archivo_nombre = val
+        //             td1.textContent = archivo_nombre;
+        //             td1.style.width = "35%"
+        //             td1.style.border = "1px solid black";
+        //             filaTabla.appendChild(td1);                     //AGREGAMOS LA CELDA A LA FILA
 
-                });
+        //         });
 
-                cuerpo.appendChild(filaTabla);                      //AGREGAMOS LA FILA AL CUERPO
-            });
-            tabla.appendChild(cuerpo);                              //AGREGAMOS EL CUERPO A LA TABLA
+        //         cuerpo.appendChild(filaTabla);                      //AGREGAMOS LA FILA AL CUERPO
+        //     });
+        //     tabla.appendChild(cuerpo);                              //AGREGAMOS EL CUERPO A LA TABLA
 
-            cabecera.appendChild(cabeceraFila);                     //AGREGAMOS LOS ENCABEZADOS AL HEAD
-            tabla.appendChild(cabecera);                            //AGREGAMOS EL HEAD A LA TABLA
-            tabla.style.border = "1px solid black";
+        //     cabecera.appendChild(cabeceraFila);                     //AGREGAMOS LOS ENCABEZADOS AL HEAD
+        //     tabla.appendChild(cabecera);                            //AGREGAMOS EL HEAD A LA TABLA
+        //     tabla.style.border = "1px solid black";
 
-            contenedor.appendChild(tabla);                          //AGREGAMOS LA TABLA AL DIV
-            contenedor.style.overflow = "auto";
-            contenedor.style.maxHeight = "400px";
-        }
+        //     contenedor.appendChild(tabla);                          //AGREGAMOS LA TABLA AL DIV
+        //     contenedor.style.overflow = "auto";
+        //     contenedor.style.maxHeight = "400px";
+        // }
 
-        function mostrar_grafico_historico(titulos_eje_x, valores_hum_eje_y) {
+        function mostrar_grafico_historico(titulos_eje_x, valores_hist_oxigeno, valores_hist_frecuencia) {
 
-            const graf_hum_rel = document.getElementById("grafica_humedad_relativa");
+            const graf_hist_oxigeno = document.getElementById("grafica_oxigeno");
             const graf_hist_cardiaco = document.getElementById("grafica_ritmo_cardiaco");
 
+            // Destruir el gráfico del oxigeno
+            const existingChart1 = Chart.getChart(graf_hist_oxigeno);
+            if (existingChart1) {
+                existingChart1.destroy();
+            }
 
-            // Destruir el gráfico existente si hay uno
-            const existingChart = Chart.getChart(graf_hum_rel);
-            if (existingChart) {
-                existingChart.destroy();
+            // Destruir el gráfico del ritmo cardiaco
+            const existingChart2 = Chart.getChart(graf_hist_cardiaco);
+            if (existingChart2) {
+                existingChart2.destroy();
             }
 
             // Construir el grafico
-            new Chart(graf_hum_rel, {
+            new Chart(graf_hist_oxigeno, {
                 type: "line",
                 data: {
                     labels: titulos_eje_x,
                     datasets: [
                         {
                             label: "Saturación oxígeno",
-                            data: valores_hum_eje_y,
+                            data: valores_hist_oxigeno,
                             tension: 0.5,
                             borderColor: 'rgb(75, 148, 227)',
                             pointBackgroundColor: 'rgba(75, 148, 227)',
@@ -449,7 +454,7 @@
                     datasets: [
                         {
                             label: "Frecuencia Cardiaca",
-                            data: valores_hum_eje_y,
+                            data: valores_hist_frecuencia,
                             tension: 0.5,
                             borderColor: 'rgb(75, 148, 227)',
                             pointBackgroundColor: 'rgba(75, 148, 227)',
@@ -483,8 +488,8 @@
                     },
                 },
             });
-        }
 
+        }
 
         // //CREAR GRAFICA DE ACTIVIDAD FISICA LINEAL
         // const graf_lineal_actividad = document.getElementById("grafica_lineal_actividad");
