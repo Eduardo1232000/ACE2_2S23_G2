@@ -1,4 +1,5 @@
-#nav_front{             /*NAV DEL FRONT*/
+#nav_front {
+  /*NAV DEL FRONT*/
   position: absolute;
   top: 0%;
   left: 0%;
@@ -8,26 +9,19 @@
   color: #fff;
 }
 
-#titulo_nav{             /*NAV DEL FRONT*/
+#titulo_nav {
+  /*NAV DEL FRONT*/
   position: absolute;
   top: 0%;
   left: 2%;
   font-size: 25px;
 }
-#boton_vistas_nav{             /*NAV DEL FRONT*/
+
+#boton_registro_nav {
+  /*NAV DEL FRONT*/
   position: absolute;
   top: 0%;
-  left: 65%;
-  width: 150px;
-  font-size: 25px;
-  border-radius: 12px;
-  color: #fff;
-  background-color: rgb(89, 110, 137);
-}
-#boton_registro_nav{             /*NAV DEL FRONT*/
-  position: absolute;
-  top: 0%;
-  left: 75%;
+  left: 60%;
   width: 150px;
   font-size: 25px;
   border-radius: 12px;
@@ -35,10 +29,36 @@
   background-color: rgb(60, 81, 109);
 }
 
-#boton_login_nav{             /*NAV DEL FRONT*/
+#boton_login_nav {
+  /*NAV DEL FRONT*/
   position: absolute;
   top: 0%;
-  left: 85%;
+  left: 70%;
+  width: 150px;
+  height: 43px;
+  font-size: 20px;
+  border-radius: 12px;
+  color: #fff;
+  background-color: rgb(60, 81, 109);
+}
+
+#boton_vistas_nav {
+  /*NAV DEL FRONT*/
+  position: absolute;
+  top: 0%;
+  left: 80%;
+  width: 150px;
+  font-size: 25px;
+  border-radius: 12px;
+  color: #fff;
+  background-color: rgb(89, 110, 137);
+}
+
+#btnCerrarSesion {
+  /*NAV DEL FRONT*/
+  position: absolute;
+  top: 0%;
+  left: 90%;
   width: 150px;
   height: 43px;
   font-size: 20px;
@@ -48,32 +68,47 @@
 }
 
 
-#boton_tiempo_real {      /*BOTON PARA CAMBIAR A VISTA DE TIEMPO REAL*/
-  background-color: white; /* Color de fondo */
-  color: black;            /* Color de texto */
-  font-size: 16px;           /* Tamaño de fuente */
-  padding: 10px 20px;        /* Relleno (padding) */
-  border: 1;                 /* Sin borde */
-  cursor: pointer;           /* Cambia el cursor al pasar sobre el botón */
+#boton_tiempo_real {
+  /*BOTON PARA CAMBIAR A VISTA DE TIEMPO REAL*/
+  background-color: white;
+  /* Color de fondo */
+  color: black;
+  /* Color de texto */
+  font-size: 16px;
+  /* Tamaño de fuente */
+  padding: 10px 20px;
+  /* Relleno (padding) */
+  border: 1;
+  /* Sin borde */
+  cursor: pointer;
+  /* Cambia el cursor al pasar sobre el botón */
   position: absolute;
   top: 20%;
   left: 5%;
 }
 
-#boton_tiempo_historico {   /*BOTON PARA CAMBIAR A VISTA HISTORICO*/
-  background-color: white;  /* Color de fondo */
-  color: black;             /* Color de texto */
-  font-size: 16px;            /* Tamaño de fuente */
-  padding: 10px 20px;         /* Relleno (padding) */
-  border: 1;                  /* Sin borde */
-  cursor: pointer;            /* Cambia el cursor al pasar sobre el botón */
+#boton_tiempo_historico {
+  /*BOTON PARA CAMBIAR A VISTA HISTORICO*/
+  background-color: white;
+  /* Color de fondo */
+  color: black;
+  /* Color de texto */
+  font-size: 16px;
+  /* Tamaño de fuente */
+  padding: 10px 20px;
+  /* Relleno (padding) */
+  border: 1;
+  /* Sin borde */
+  cursor: pointer;
+  /* Cambia el cursor al pasar sobre el botón */
   position: absolute;
   top: 30%;
   left: 5%;
 }
 
 /*---------------------- VISTA TIEMPO REAL -------------------------*/
-.circulo-decoracion {       /*CIRCULO BLANCO DENTRO DE LAS GRAFICAS*/
+.circulo-decoracion {
+  /*CIRCULO BLANCO DENTRO DE LAS GRAFICAS*/
   width: 150px;
   height: 150px;
   border-radius: 50%;
@@ -82,7 +117,8 @@
   background: #fff;
 }
 
-.titulo_oxigeno{        /*TITULO SATURACION DE OXIGENO*/
+.titulo_oxigeno {
+  /*TITULO SATURACION DE OXIGENO*/
   position: absolute;
   top: 25%;
   left: 20%;
@@ -92,7 +128,8 @@
   font-weight: bold;
 }
 
-.grafico-oxigeno {      /*GRAFICO OXIGENO*/
+.grafico-oxigeno {
+  /*GRAFICO OXIGENO*/
   width: 250px;
   height: 250px;
   border-radius: 50%;
@@ -102,13 +139,12 @@
   align-items: center;
   justify-content: center;
   display: flex;
-  background: conic-gradient(
-    var(--color_grafica) 0% var(--porcentaje_oxigeno, 0%),
-    lightgray var(--porcentaje_oxigeno, 0%) 100%
-  );
+  background: conic-gradient(var(--color_grafica) 0% var(--porcentaje_oxigeno, 0%),
+      lightgray var(--porcentaje_oxigeno, 0%) 100%);
 }
 
-.valor_oxigeno {            /*NUMERO GRANDE DENTRO DE LA GRAFICA*/
+.valor_oxigeno {
+  /*NUMERO GRANDE DENTRO DE LA GRAFICA*/
   position: absolute;
   top: 40%;
   left: 50%;
@@ -118,7 +154,8 @@
   color: rgb(0, 0, 0);
 }
 
-.titulo_frecuencia_cardiaca{  /*TITULO FRECUENCIA CARDIACA*/
+.titulo_frecuencia_cardiaca {
+  /*TITULO FRECUENCIA CARDIACA*/
   position: absolute;
   top: 25%;
   left: 60%;
@@ -128,7 +165,8 @@
   font-weight: bold;
 }
 
-.grafico-cardiaco {         /*GRAFICO DE FRECUENCIA CARDIACA*/
+.grafico-cardiaco {
+  /*GRAFICO DE FRECUENCIA CARDIACA*/
   width: 250px;
   height: 250px;
   border-radius: 50%;
@@ -138,12 +176,12 @@
   align-items: center;
   justify-content: center;
   display: flex;
-  background: conic-gradient(
-    var(--color_grafica_cardiaco) 0% var(--porcentaje_cardiaco, 0%),
-    lightgray var(--porcentaje_cardiaco, 0%) 100%
-  );
+  background: conic-gradient(var(--color_grafica_cardiaco) 0% var(--porcentaje_cardiaco, 0%),
+      lightgray var(--porcentaje_cardiaco, 0%) 100%);
 }
-.valor_cardiaco {         /*NUMERO GRANDE DENTRO DE LA GRAFICA*/
+
+.valor_cardiaco {
+  /*NUMERO GRANDE DENTRO DE LA GRAFICA*/
   position: absolute;
   top: 40%;
   left: 50%;
@@ -154,7 +192,8 @@
 }
 
 /*---------------------- VISTA TIEMPO HISTORICO -------------------------*/
-.titulo_oxigeno_historico{        /*TITULO SATURACION DE OXIGENO*/
+.titulo_oxigeno_historico {
+  /*TITULO SATURACION DE OXIGENO*/
   position: absolute;
   top: 15%;
   left: 20%;
@@ -166,7 +205,7 @@
 
 /*---------------------- VISTA REGISTRO -------------------------*/
 
-#titulo_registro{
+#titulo_registro {
   position: absolute;
   top: 10%;
   left: 37%;
@@ -176,7 +215,7 @@
   font-weight: bold;
 }
 
-#label_condiciones_registro{
+#label_condiciones_registro {
   position: absolute;
   top: 51%;
   left: 5%;
@@ -186,7 +225,7 @@
   font-weight: bold;
 }
 
-#label_horarios_sueno{
+#label_horarios_sueno {
   position: absolute;
   top: 51%;
   left: 35%;
@@ -196,57 +235,61 @@
   font-weight: bold;
 }
 
-#diabetes_check{
+#diabetes_check {
   position: absolute;
   top: 58%;
   left: 5%;
 }
-#label_diabetes_check{
+
+#label_diabetes_check {
   position: absolute;
   top: 57%;
   left: 6%;
 }
 
-#cardiovascular_check{
+#cardiovascular_check {
   position: absolute;
   top: 62%;
   left: 5%;
 }
-#label_cardiovascular_check{
+
+#label_cardiovascular_check {
   position: absolute;
   top: 61%;
   left: 6%;
 }
 
-#pulmonar_check{
+#pulmonar_check {
   position: absolute;
   top: 66%;
   left: 5%;
 }
-#label_pulmonar_check{
+
+#label_pulmonar_check {
   position: absolute;
   top: 65%;
   left: 6%;
 }
 
-#autoinmune_check{
+#autoinmune_check {
   position: absolute;
   top: 70%;
   left: 5%;
 }
-#label_autoinmune_check{
+
+#label_autoinmune_check {
   position: absolute;
   top: 69%;
   left: 6%;
 }
 
-#horarios_sueno_select{
+#horarios_sueno_select {
   position: absolute;
   top: 57%;
   left: 35%;
 }
 
-#registro_texto_nombre{
+#registro_texto_nombre {
   position: absolute;
   top: 23%;
   left: 5%;
@@ -256,7 +299,7 @@
   font-size: 15px;
 }
 
-#registro_texto_usuario{
+#registro_texto_usuario {
   position: absolute;
   top: 30%;
   left: 5%;
@@ -266,7 +309,7 @@
   font-size: 15px;
 }
 
-#registro_texto_password{
+#registro_texto_password {
   position: absolute;
   top: 37%;
   left: 5%;
@@ -276,7 +319,7 @@
   font-size: 15px;
 }
 
-#registro_texto_edad{
+#registro_texto_edad {
   position: absolute;
   top: 30%;
   left: 35%;
@@ -286,7 +329,7 @@
   font-size: 15px;
 }
 
-#registro_texto_altura{
+#registro_texto_altura {
   position: absolute;
   top: 37%;
   left: 35%;
@@ -296,7 +339,7 @@
   font-size: 15px;
 }
 
-#registro_texto_peso{
+#registro_texto_peso {
   position: absolute;
   top: 44%;
   left: 35%;
@@ -306,7 +349,7 @@
   font-size: 15px;
 }
 
-#boton_registrar{
+#boton_registrar {
   position: absolute;
   top: 75%;
   left: 50%;
@@ -319,7 +362,7 @@
 }
 
 /*---------------------- VISTA LOGIN -------------------------*/
-#titulo_login{
+#titulo_login {
   position: absolute;
   top: 10%;
   left: 41%;
@@ -328,7 +371,8 @@
   font-size: 40px;
   font-weight: bold;
 }
-#login_texto_usuario{
+
+#login_texto_usuario {
   position: absolute;
   top: 34%;
   left: 40%;
@@ -338,7 +382,8 @@
   font-size: 25px;
   border-radius: 10px;
 }
-#login_texto_password{
+
+#login_texto_password {
   position: absolute;
   top: 44%;
   left: 40%;
@@ -349,7 +394,7 @@
   border-radius: 10px;
 }
 
-#boton_login{
+#boton_login {
   position: absolute;
   top: 54%;
   left: 44%;
@@ -362,7 +407,7 @@
   font-weight: bold;
 }
 
-#cuadro_fondo{
+#cuadro_fondo {
   position: absolute;
   top: 7%;
   left: 33%;

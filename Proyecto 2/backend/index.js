@@ -27,13 +27,14 @@ app.use(morgan("dev"));
 
 // importe de libreria para la conexion a la base de datos
 const { getConnection } = require("./src/database");
+let estaLogueado = false;
 
 // Rutas
 app.get("/", async (req, res) => {
   try {
     res.render('frontend.ejs', {
       ruta_request: 'http://localhost:3000/',
-      logueado: false,
+      logueado: estaLogueado,
     });
   } catch (error) {
     res.status(500).json({ code: 500, message: error });
@@ -134,12 +135,12 @@ app.post("/registrar", async (req, res) => {
     ]);
 
     if (result.affectedRows == 0) {
-      res.status(500).json({ code: 500, message: "No se pudo registrar" });
+      res.json({ code: 500, message: "No se pudo registrar" });
     }
 
     res.json({ code: 200, message: "Registro exitoso" });
   } catch (error) {
-    res.status(500).json({ code: 500, message: error });
+    res.json({ code: 500, message: error });
   }
 });
 
@@ -153,13 +154,22 @@ app.get("/login/:usuario/:pass", async (req, res) => {
     const [results, fields] = await conexion.query(sql, [datos.usuario, datos.pass]);
 
     if (results.length > 0) {
-      console.log(results[0])
-      res.json({ code: 200, usuario: results[0] });
+      res.json({ code: 200, message: "¡Bienvenido!", usuario: results[0] });
+      estaLogueado = true;
     } else {
-      res.status(500).json({ code: 500, message: "Usuario o contraseña incorrecta" });
+      res.json({ code: 500, message: "Usuario o contraseña incorrecta" });
     }
   } catch (error) {
-    res.status(500).json({ code: 500, message: error });
+    res.json({ code: 500, message: error });
+  }
+});
+
+app.post("/cerrar-sesion", async (req, res) => {
+  try {
+    estaLogueado = false;
+    res.json({ code: 200, message: "Sesión cerrada correctamente" });
+  } catch (error) {
+    res.json({ code: 500, message: error });
   }
 });
 

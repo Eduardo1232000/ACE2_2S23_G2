@@ -11,15 +11,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <nav id="nav_front">
         <label id="titulo_nav"> Proyecto 2 </label>
-        <button id="boton_registro_nav">Registro</button>
-        <button id="boton_login_nav">Iniciar Sesion</button>
-        <button id="boton_vistas_nav" <%= logueado ? '' : 'hidden' %>>Vistas</button>
+        <button id="boton_registro_nav" <%=!logueado ? '' : 'hidden' %>>Registro</button>
+        <button id="boton_login_nav" <%=!logueado ? '' : 'hidden' %>>Iniciar Sesion</button>
+        <button id="boton_vistas_nav" <%=logueado ? '' : 'hidden' %>>Vistas</button>
+        <button id="btnCerrarSesion" <%=logueado ? '' : 'hidden' %>>Cerrar Sesion</button>
     </nav>
     <div id="login_dash">
         <div id="cuadro_fondo"></div>
@@ -141,14 +143,16 @@
 
     <script>
 
-        document.getElementById("vistas").style.display = "none";
+        // SE MUESTRA LA VISTA DEL LOGIN SIEMPRE QUE SE ACCEDA O ACTUALICE LA PAGINA PRINCIPAL
+        document.getElementById("vistas").style.display = "<%= logueado ? 'block' : 'none' %>";
         document.getElementById("registro").style.display = "none";
-        document.getElementById("login_dash").style.display = "block";
+        document.getElementById("login_dash").style.display = "<%= logueado ? 'none' : 'block' %>";
 
         document.getElementById("boton_tiempo_real").style.backgroundColor = "#BEEDC7";
         document.getElementById("vista_historica").style.display = "none";
         document.getElementById("boton_vistas_nav").style.backgroundColor = "#609BB0";
-        //BOTON VISTAS
+
+        //BOTON VISTAS - VISUALIZACION
         document.getElementById("boton_vistas_nav").addEventListener("click", function (event) {
             document.getElementById("boton_vistas_nav").style.backgroundColor = "#609BB0";
             document.getElementById("boton_registro_nav").style.backgroundColor = "#3C516D";
@@ -157,8 +161,7 @@
             document.getElementById("registro").style.display = "none";
             document.getElementById("login_dash").style.display = "none";
         });
-
-        //BOTON REGISTRO
+        //BOTON REGISTRO - VISUALIZACION
         document.getElementById("boton_registro_nav").addEventListener("click", function (event) {
             document.getElementById("boton_vistas_nav").style.backgroundColor = "#3C516D";
             document.getElementById("boton_registro_nav").style.backgroundColor = "#609BB0";
@@ -167,7 +170,7 @@
             document.getElementById("registro").style.display = "block";
             document.getElementById("login_dash").style.display = "none";
         });
-        //BOTON LOGIN
+        //BOTON LOGIN - VISUALIZACION
         document.getElementById("boton_login_nav").addEventListener("click", function (event) {
             document.getElementById("boton_vistas_nav").style.backgroundColor = "#3C516D";
             document.getElementById("boton_registro_nav").style.backgroundColor = "#3C516D";
@@ -176,6 +179,7 @@
             document.getElementById("registro").style.display = "none";
             document.getElementById("login_dash").style.display = "block";
         });
+
         //BOTON LOGIN USUARIO
         document.getElementById("boton_login").addEventListener("click", function (event) {
 
@@ -183,10 +187,28 @@
             let password_login = document.getElementById("login_texto_password").value
 
             //HACER LOGIN
-
-            //
+            fetch('<%= ruta_request %>' + 'login' + '/' + usuario_login + '/' + password_login, {
+                method: 'GET', headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    Swal.fire({
+                        title: (data.code == 200 ? 'Exitoso' : 'Error'),
+                        text: data.message,
+                        icon: (data.code == 200 ? 'success' : 'error'),
+                        confirmButtonText: 'Ok',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed && data.code == 200) {
+                            location.reload();
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         });
-        //BOTON REGISTRAR  USUARIO
+        //BOTON REGISTRAR USUARIO
         document.getElementById("boton_registrar").addEventListener("click", function (event) {
             let nombre = document.getElementById("registro_texto_nombre").value
             let usuario = document.getElementById("registro_texto_usuario").value
@@ -216,11 +238,36 @@
 
             //GUARDARLO EN LA BASE DE DATOS
             fetch('<%= ruta_request %>' + 'registrar', {
-                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)
-                })
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+            })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    Swal.fire({
+                        title: (data.code == 200 ? 'Exitoso' : 'Error'),
+                        text: data.message,
+                        icon: (data.code == 200 ? 'success' : 'error'),
+                        confirmButtonText: 'Ok',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed && data.code == 200) {
+                            location.reload();
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+        //BOTON CERRAR SESION
+        document.getElementById("btnCerrarSesion").addEventListener("click", function (event) {
+
+            //GUARDARLO EN LA BASE DE DATOS
+            fetch('<%= ruta_request %>' + 'cerrar-sesion', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    location.reload();
                 })
                 .catch(error => {
                     console.error('Error:', error);
