@@ -15,11 +15,11 @@
 </head>
 
 <body>
-    <nav id="nav_front" >
+    <nav id="nav_front">
         <label id="titulo_nav"> Proyecto 2 </label>
-        <button id="boton_vistas_nav">Vistas</button>
         <button id="boton_registro_nav">Registro</button>
         <button id="boton_login_nav">Iniciar Sesion</button>
+        <button id="boton_vistas_nav" <%= logueado ? '' : 'hidden' %>>Vistas</button>
     </nav>
     <div id="login_dash">
         <div id="cuadro_fondo"></div>
@@ -40,7 +40,7 @@
         <label id="label_condiciones_registro">Condiciones pre existentes</label>
         <label id="label_horarios_sueno">Horarios de Sueño</label>
 
-        <input type="checkbox" id="diabetes_check" name="diabetes_check"  />
+        <input type="checkbox" id="diabetes_check" name="diabetes_check" />
         <label id="label_diabetes_check">Diabetes</label>
 
         <input type="checkbox" id="cardiovascular_check" name="cardiovascular_check" />
@@ -53,16 +53,15 @@
         <label id="label_autoinmune_check">Enfermedad Autoinmune</label>
 
         <select name="Selecciona la Hora" id="horarios_sueno_select">
-            <option value="23:00 - 08:30 lunes">23:00 - 08:30 Lunes</option>
-            <option value="23:00 - 08:30 martes">23:00 - 08:30 Martes</option>
-            <option value="23:00 - 08:30 miercoles">23:00 - 08:30 Miercoles</option>
-            <option value="23:00 - 08:30 jueves">23:00 - 08:30 Jueves</option>
-            <option value="23:00 - 08:30 viernes">23:00 - 08:30 Viernes</option>
+            <option value="1">23:00 - 08:30 Lunes</option>
+            <option value="2">23:00 - 08:30 Martes</option>
+            <option value="3">23:00 - 08:30 Miercoles</option>
+            <option value="4">23:00 - 08:30 Jueves</option>
+            <option value="5">23:00 - 08:30 Viernes</option>
         </select>
 
         <button id="boton_registrar"> Registrar</button>
     </div>
-    
     <div id="vistas">
         <button type="button" id="boton_tiempo_real">Tiempo Real</button>
         <button type="button" id="boton_tiempo_historico">Historico</button>
@@ -86,34 +85,46 @@
 
         <div id="vista_historica">
 
-            <div style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 150px; left: 700px;">
+            <div
+                style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 150px; left: 700px;">
                 <canvas id="grafica_humedad_relativa"></canvas>
             </div>
 
-            <div style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 550px; left: 700px;">
+            <div
+                style="width: 700px; height: 700px;  margin-right: 100px;  position: absolute; top: 550px; left: 700px;">
                 <canvas id="grafica_ritmo_cardiaco"></canvas>
             </div>
 
-            <div id="lista_actividades" style="background-color: #ffffff; width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 950px; left: 700px;">
-                
+            <div id="lista_actividades"
+                style="background-color: #ffffff; width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 950px; left: 700px;">
+
             </div>
- 
-             <div style="width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 1350px; left: 700px;">
-                 <canvas id="grafica_lineal_actividad"></canvas></div>
 
-             <div style=" width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 1750px; left: 700px;">
-                 <canvas id="grafica_barras_actividad"></canvas></div>
+            <div
+                style="width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 1350px; left: 700px;">
+                <canvas id="grafica_lineal_actividad"></canvas>
+            </div>
 
-             <div style=" width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 2150px; left: 700px;">
-                 <canvas id="grafica_dias_mayor_menor"></canvas></div>
+            <div
+                style=" width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 1750px; left: 700px;">
+                <canvas id="grafica_barras_actividad"></canvas>
+            </div>
 
-             <div style="width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 2550px; left: 700px;">
-                 <canvas id="grafica_barras_reposo_vs_ejercicio"></canvas></div>
+            <div
+                style=" width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 2150px; left: 700px;">
+                <canvas id="grafica_dias_mayor_menor"></canvas>
+            </div>
 
-             <div id="calendario_actividades" style="background-color: #ffffff; width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 2950px; left: 700px;">
-                
-             </div>
-            
+            <div
+                style="width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 2550px; left: 700px;">
+                <canvas id="grafica_barras_reposo_vs_ejercicio"></canvas>
+            </div>
+
+            <div id="calendario_actividades"
+                style="background-color: #ffffff; width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 2950px; left: 700px;">
+
+            </div>
+
             <div class="col" style="display: inline-block; margin-right: 10px;">
                 <label style="position: absolute; top: 300px; left: 100px; font-size: 25px;">Fecha inicio:</label><br>
                 <input type="date" id="txtFechaInicial"
@@ -127,18 +138,17 @@
         </div>
 
     </div>
-    
 
     <script>
 
-        document.getElementById("vistas").style.display = "block";
+        document.getElementById("vistas").style.display = "none";
         document.getElementById("registro").style.display = "none";
-        document.getElementById("login_dash").style.display = "none";
+        document.getElementById("login_dash").style.display = "block";
 
         document.getElementById("boton_tiempo_real").style.backgroundColor = "#BEEDC7";
         document.getElementById("vista_historica").style.display = "none";
         document.getElementById("boton_vistas_nav").style.backgroundColor = "#609BB0";
-       //BOTON VISTAS
+        //BOTON VISTAS
         document.getElementById("boton_vistas_nav").addEventListener("click", function (event) {
             document.getElementById("boton_vistas_nav").style.backgroundColor = "#609BB0";
             document.getElementById("boton_registro_nav").style.backgroundColor = "#3C516D";
@@ -168,12 +178,12 @@
         });
         //BOTON LOGIN USUARIO
         document.getElementById("boton_login").addEventListener("click", function (event) {
-            
+
             let usuario_login = document.getElementById("login_texto_usuario").value
             let password_login = document.getElementById("login_texto_password").value
-            
+
             //HACER LOGIN
-            
+
             //
         });
         //BOTON REGISTRAR  USUARIO
@@ -190,9 +200,31 @@
             let valor_autoinmune = document.getElementById("autoinmune_check").checked          //FALSE O TRUE
             let horario_sueno = document.getElementById("horarios_sueno_select").value
 
-            //GUARDARLO EN LA BASE DE DATOS
+            const data = {
+                usuario: usuario,
+                nombre: nombre,
+                pass: password,
+                edad: edad,
+                altura: altura,
+                peso: peso,
+                diabetes: valor_diabetes,
+                cardiovascular: valor_cardiovascular,
+                pulmonar: valor_pulmonar,
+                autoinmune: valor_autoinmune,
+                horarioSue: horario_sueno
+            };
 
-            //
+            //GUARDARLO EN LA BASE DE DATOS
+            fetch('<%= ruta_request %>' + 'registrar', {
+                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         });
 
         //BOTON TIEMPO REAL
@@ -242,20 +274,22 @@
         // FUNCION PARA CAMBIAR EL PORCENTAJE DE LA TABLA
         function cambiar_ritmo_cardiaco(nuevoPorcentaje) {
             const grafico_temp = document.querySelector('.grafico-cardiaco');
-            grafico_temp.style.setProperty('--porcentaje_cardiaco', (nuevoPorcentaje*100/200) + '%');
+            grafico_temp.style.setProperty('--porcentaje_cardiaco', (nuevoPorcentaje * 100 / 200) + '%');
             document.querySelector('.valor_cardiaco').textContent = nuevoPorcentaje + 'ppm';
-            
-            //CAMBIO DE COLOR 
-            if(nuevoPorcentaje >= 100 ){                                                                            //CARDIACO MAYOR IGUAL A 100                                                                 
-                grafico_cardiaco.style.setProperty('--color_grafica_cardiaco',("#FF0000")) //ROJO                   
-            }else if(nuevoPorcentaje >= 61 &&  nuevoPorcentaje <=99){                                                 //CARDIACO ENTRE 61 Y 99
-                grafico_cardiaco.style.setProperty('--color_grafica_cardiaco',("#04FF00")) //VERDE
-            }else{                                                                                               //CARDIACO MENOR IGUAL A 60
-                grafico_cardiaco.style.setProperty('--color_grafica_cardiaco',("#FF0000")) //ROJO
+
+            //CAMBIO DE COLOR
+            if (nuevoPorcentaje >= 100) {                                                                            //CARDIACO MAYOR IGUAL A 100
+                grafico_cardiaco.style.setProperty('--color_grafica_cardiaco', ("#FF0000")) //ROJO
+            } else if (nuevoPorcentaje >= 61 && nuevoPorcentaje <= 99) {                                                 //CARDIACO ENTRE 61 Y 99
+                grafico_cardiaco.style.setProperty('--color_grafica_cardiaco', ("#04FF00")) //VERDE
+            } else {                                                                                               //CARDIACO MENOR IGUAL A 60
+                grafico_cardiaco.style.setProperty('--color_grafica_cardiaco', ("#FF0000")) //ROJO
             }
-            
+
         }
-        function crear_encabezado(cabecera,titulo,porcentaje_tamano){
+
+        // Crear encabezado
+        function crear_encabezado(cabecera, titulo, porcentaje_tamano) {
             const encabezado = document.createElement('th'); //COLUMNA 1
             encabezado.textContent = titulo;
             encabezado.style.width = porcentaje_tamano
@@ -263,9 +297,9 @@
             encabezado.style.border = "1px solid black";
             encabezado.style.textAlign = "center"
             cabecera.appendChild(encabezado);
-    }
+        }
 
-        function crear_tabla(contenedor, datos,encabezados,tamanos_encabezado){
+        function crear_tabla(contenedor, datos, encabezados, tamanos_encabezado) {
             const tabla = document.createElement('table');          //CREAMOS LA TABLA
             const cabecera = document.createElement('thead');       //CREAMOS LOS HEAD
             const cabeceraFila = document.createElement('tr');      //NUEVA FILA
@@ -273,16 +307,16 @@
             //CREAMOS CADA ENCABEZADO
             let encabezado = encabezados.split(",");
             let tamanos_enc = tamanos_encabezado.split(",");
-            for(var i =0;i<encabezado.length;i++){
-                crear_encabezado(cabeceraFila, encabezado[i],tamanos_enc[i]);
+            for (var i = 0; i < encabezado.length; i++) {
+                crear_encabezado(cabeceraFila, encabezado[i], tamanos_enc[i]);
             }
-            //AGREGAMOS EL CONTENIDO 
+            //AGREGAMOS EL CONTENIDO
             const cuerpo = document.createElement('tbody');         //CONTENIDO DE LA TABLA (TBODY)
             separado = datos.split(";")                             //SEPARAMOS LA CADENA POR CADA ";"
             separado.forEach((fila) => {                            //RECORREMOS LA CADENA
                 const filaTabla = document.createElement('tr');     //NUEVA FILA
                 let datos_separados = fila.split(",")               //SEPARAMOS LA CADENA POR ","
-                datos_separados.forEach((val) =>{                   //RECORREMOS LA CADENA NUEVA
+                datos_separados.forEach((val) => {                   //RECORREMOS LA CADENA NUEVA
                     const td1 = document.createElement('td');       //CREAMOS LA CELDA
                     let archivo_nombre = val
                     td1.textContent = archivo_nombre;
@@ -294,7 +328,7 @@
 
                 cuerpo.appendChild(filaTabla);                      //AGREGAMOS LA FILA AL CUERPO
             });
-            tabla.appendChild(cuerpo);                              //AGREGAMOS EL CUERPO A LA TABLA 
+            tabla.appendChild(cuerpo);                              //AGREGAMOS EL CUERPO A LA TABLA
 
             cabecera.appendChild(cabeceraFila);                     //AGREGAMOS LOS ENCABEZADOS AL HEAD
             tabla.appendChild(cabecera);                            //AGREGAMOS EL HEAD A LA TABLA
@@ -309,7 +343,7 @@
 
             const graf_hum_rel = document.getElementById("grafica_humedad_relativa");
             const graf_hist_cardiaco = document.getElementById("grafica_ritmo_cardiaco");
-            
+
 
             // Destruir el gráfico existente si hay uno
             const existingChart = Chart.getChart(graf_hum_rel);
@@ -407,9 +441,9 @@
 
         //CREAR GRAFICA DE ACTIVIDAD FISICA LINEAL
         const graf_lineal_actividad = document.getElementById("grafica_lineal_actividad");
-        var ejey_tiempo_Real    = [100, 90, 95, 80, 105, 70, 69, 99, 100, 105]; //CAMBIAR DATOS POR LOS NUEVOS
-        var ejeX_tiempo_Real = ["1","2","3","4","5","6","7","8","9","10"] //NO TOCARLO, SOLO ES PARA QUE MUESTRE 10 DATOS
-        var colores_actividad_fisica = ["orange","red","blue","green","green","blue","orange","orange", "red","blue"]   //CAMBIAR POR LOS COLORES DE CADA DATO
+        var ejey_tiempo_Real = [100, 90, 95, 80, 105, 70, 69, 99, 100, 105]; //CAMBIAR DATOS POR LOS NUEVOS
+        var ejeX_tiempo_Real = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] //NO TOCARLO, SOLO ES PARA QUE MUESTRE 10 DATOS
+        var colores_actividad_fisica = ["orange", "red", "blue", "green", "green", "blue", "orange", "orange", "red", "blue"]   //CAMBIAR POR LOS COLORES DE CADA DATO
         new Chart(graf_lineal_actividad, {
             type: "line",
             data: {
@@ -422,13 +456,13 @@
                         borderColor: "transparent",
                         pointBackgroundColor: colores_actividad_fisica,
                         fill: 'start',
-                
+
                     },
                 ],
             },
             options: {
                 plugins: {
-                    
+
                     title: {
                         display: true,
                         text: 'Actividad Fisica',
@@ -438,25 +472,25 @@
                     }
                 },
                 scales: {
-                    y : {
-                        min : 0,
-                        grid:{
-                            display:false
+                    y: {
+                        min: 0,
+                        grid: {
+                            display: false
                         }
                     },
                     x: {
-                        ticks: { color: 'rgb(10, 10, 10)'},
-                        grid:{
-                            display:false
+                        ticks: { color: 'rgb(10, 10, 10)' },
+                        grid: {
+                            display: false
                         }
                     }
                 },
             },
         });
-        
+
         //CREAR GRAFICA DE ACTIVIDAD FISICA ACUMULADA (BARRAS)
         const graf_barras_actividad = document.getElementById("grafica_barras_actividad");
-        var ejey_actividad_fisica_acum    = [10, 20, 30, 40];   //CAMBIAR LOS DATOS POR LOS DE LA BASE
+        var ejey_actividad_fisica_acum = [10, 20, 30, 40];   //CAMBIAR LOS DATOS POR LOS DE LA BASE
         var ejeX_actividad_fisica = ["Actividad Fisica Inteso", "Actividad fisica normal", "Sin actividad fisica o reposo", "Irregularidad sueño"]
         new Chart(graf_barras_actividad, {
             type: "bar",
@@ -468,14 +502,14 @@
                         data: ejey_actividad_fisica_acum,
                         tension: 0.5,
                         backgroundColor: [
-                        'orange', 'green', 'blue', 'red' // Colores para cada segmento de la línea
+                            'orange', 'green', 'blue', 'red' // Colores para cada segmento de la línea
                         ],
                     },
                 ],
             },
             options: {
                 plugins: {
-                    
+
                     title: {
                         display: true,
                         text: 'Actividad Fisica',
@@ -485,16 +519,16 @@
                     }
                 },
                 scales: {
-                    y : {
-                        min : 0,
-                        grid:{
-                            display:false
+                    y: {
+                        min: 0,
+                        grid: {
+                            display: false
                         }
                     },
                     x: {
-                        ticks: { color: 'rgb(10, 10, 10)'},
-                        grid:{
-                            display:false
+                        ticks: { color: 'rgb(10, 10, 10)' },
+                        grid: {
+                            display: false
                         }
                     }
                 },
@@ -502,114 +536,114 @@
         });
 
         //CREAR GRAFICA DE 10 DIAS MAS ACTIVOS DE MAYOR A MENOR
-        const graf_mayor_menor = document.getElementById("grafica_dias_mayor_menor");
-        var ejey_oxigeno_top     = [100, 98, 97, 98, 90, 95, 96, 100, 99, 99, 97, 95];  //CAMBIAR
-        var ejey_cardiaco_top    = [100, 95, 90, 85, 83, 82, 80, 78, 77, 73, 70, 69];   //CAMBIAR
-        new Chart(graf_mayor_menor, {
-            type: "line",
-            data: {
-                labels: ejeX,
-                datasets: [
-                    {
-                        label: "Oxigeno",
-                        data: ejey_oxigeno_top,
-                        tension: 0.5,
-                        borderColor: 'skyblue',
-                        pointBackgroundColor: 'skyblue',
-                    },
-                    {
-                        label: "Ritmo Cardiaco",
-                        data: ejey_cardiaco_top,
-                        tension: 0.5,
-                        borderColor: 'orange',
-                        pointBackgroundColor: 'orange',
-                    },
-                ],
-            },
-            options: {
-                plugins: {
-                    
-                    title: {
-                        display: true,
-                        text: 'Horarios mas activos de dia',
-                        font: {
-                            size: 24 // Cambia el tamaño del título aquí
-                        }
-                    }
-                },
-                scales: {
-                    y : {
-                        min : 0,
-                        grid:{
-                            display:false
-                        }
-                    },
-                    x: {
-                        ticks: { color: 'rgb(10, 10, 10)'},
-                        grid:{
-                            display:false
-                        }
-                    }
-                },
-            },
-        });
+        // const graf_mayor_menor = document.getElementById("grafica_dias_mayor_menor");
+        // var ejey_oxigeno_top = [100, 98, 97, 98, 90, 95, 96, 100, 99, 99, 97, 95];  //CAMBIAR
+        // var ejey_cardiaco_top = [100, 95, 90, 85, 83, 82, 80, 78, 77, 73, 70, 69];   //CAMBIAR
+        // new Chart(graf_mayor_menor, {
+        //     type: "line",
+        //     data: {
+        //         labels: ejeX,
+        //         datasets: [
+        //             {
+        //                 label: "Oxigeno",
+        //                 data: ejey_oxigeno_top,
+        //                 tension: 0.5,
+        //                 borderColor: 'skyblue',
+        //                 pointBackgroundColor: 'skyblue',
+        //             },
+        //             {
+        //                 label: "Ritmo Cardiaco",
+        //                 data: ejey_cardiaco_top,
+        //                 tension: 0.5,
+        //                 borderColor: 'orange',
+        //                 pointBackgroundColor: 'orange',
+        //             },
+        //         ],
+        //     },
+        //     options: {
+        //         plugins: {
 
-        //CREAR GRAFICA DE REPOSO VS ACTIVIDAD NORMAL
-        const graf_act_fisica_vs_reposo = document.getElementById("grafica_barras_reposo_vs_ejercicio");
-        var ejey_act_normal     = [100, 98, 97, 98, 90, 95, 96, 100, 99, 99, 97, 95];   //CAMBIAR
-        var ejey_act_reposo    = [100, 95, 90, 85, 83, 82, 80, 78, 77, 73, 70, 69];     //CAMBIAR
-        new Chart(graf_act_fisica_vs_reposo, {
-            type: "line",
-            data: {
-                labels: ejeX,
-                datasets: [
-                    {
-                        label: "Actividad Fisica Reposo",
-                        data: ejey_act_reposo,
-                        tension: 0.5,
-                        borderColor: 'blue',
-                        pointBackgroundColor: 'blue',
-                        fill: 'start',
-                        backgroundColor: '#6795D3',
-                    },
-                    {
-                        label: "Actividad Fisica Normal",
-                        data: ejey_act_normal,
-                        tension: 0.5,
-                        borderColor: 'green',
-                        pointBackgroundColor: 'green',
-                        fill: 'start',
-                        backgroundColor:'#67D386',
-                    },
-                ],
-            },
-            options: {
-                plugins: {
-                    
-                    title: {
-                        display: true,
-                        text: 'Reposo vs Actividad fisica normal',
-                        font: {
-                            size: 24 // Cambia el tamaño del título aquí
-                        }
-                    }
-                },
-                scales: {
-                    y : {
-                        min : 0,
-                        grid:{
-                            display:false
-                        }
-                    },
-                    x: {
-                        ticks: { color: 'rgb(10, 10, 10)'},
-                        grid:{
-                            display:false
-                        }
-                    }
-                },
-            },
-        });
+        //             title: {
+        //                 display: true,
+        //                 text: 'Horarios mas activos de dia',
+        //                 font: {
+        //                     size: 24 // Cambia el tamaño del título aquí
+        //                 }
+        //             }
+        //         },
+        //         scales: {
+        //             y: {
+        //                 min: 0,
+        //                 grid: {
+        //                     display: false
+        //                 }
+        //             },
+        //             x: {
+        //                 ticks: { color: 'rgb(10, 10, 10)' },
+        //                 grid: {
+        //                     display: false
+        //                 }
+        //             }
+        //         },
+        //     },
+        // });
+
+        // //CREAR GRAFICA DE REPOSO VS ACTIVIDAD NORMAL
+        // const graf_act_fisica_vs_reposo = document.getElementById("grafica_barras_reposo_vs_ejercicio");
+        // var ejey_act_normal = [100, 98, 97, 98, 90, 95, 96, 100, 99, 99, 97, 95];   //CAMBIAR
+        // var ejey_act_reposo = [100, 95, 90, 85, 83, 82, 80, 78, 77, 73, 70, 69];     //CAMBIAR
+        // new Chart(graf_act_fisica_vs_reposo, {
+        //     type: "line",
+        //     data: {
+        //         labels: ejeX,
+        //         datasets: [
+        //             {
+        //                 label: "Actividad Fisica Reposo",
+        //                 data: ejey_act_reposo,
+        //                 tension: 0.5,
+        //                 borderColor: 'blue',
+        //                 pointBackgroundColor: 'blue',
+        //                 fill: 'start',
+        //                 backgroundColor: '#6795D3',
+        //             },
+        //             {
+        //                 label: "Actividad Fisica Normal",
+        //                 data: ejey_act_normal,
+        //                 tension: 0.5,
+        //                 borderColor: 'green',
+        //                 pointBackgroundColor: 'green',
+        //                 fill: 'start',
+        //                 backgroundColor: '#67D386',
+        //             },
+        //         ],
+        //     },
+        //     options: {
+        //         plugins: {
+
+        //             title: {
+        //                 display: true,
+        //                 text: 'Reposo vs Actividad fisica normal',
+        //                 font: {
+        //                     size: 24 // Cambia el tamaño del título aquí
+        //                 }
+        //             }
+        //         },
+        //         scales: {
+        //             y: {
+        //                 min: 0,
+        //                 grid: {
+        //                     display: false
+        //                 }
+        //             },
+        //             x: {
+        //                 ticks: { color: 'rgb(10, 10, 10)' },
+        //                 grid: {
+        //                     display: false
+        //                 }
+        //             }
+        //         },
+        //     },
+        // });
 
         //EJEMPLO DE USO CREAR TABLA
         contenedor_reporte1 = document.getElementById("lista_actividades")
@@ -626,7 +660,7 @@
         datos += 'user9,9,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
         datos += 'user10,10,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
         datos += 'user11,11,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        crear_tabla(contenedor_reporte1,datos,encabezados1,tamanos1)
+        crear_tabla(contenedor_reporte1, datos, encabezados1, tamanos1)
 
         contenedor2 = document.getElementById("calendario_actividades")                                                  //MISMA FUNCION PARA OTRO REPORTE
         let encabezados2 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'      //DEBE TENER EL MISMO NUMERO DE DATOS QUE ENCABEZADOS
@@ -636,15 +670,15 @@
         datos2 += 'user1,3,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
         datos2 += 'user1,4,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
         datos2 += 'user1,5,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no'
-        
-        crear_tabla(contenedor2,datos2,encabezados2,tamanos2)
 
-        cambiar_saturacion_oxigeno(<%= data.porcentaje %>)
-        
-        setInterval(async function () {
-            const result = await fetch("http://35.221.7.73:3000/informacion").then(response => response.json()).then(data => data);
-            cambiar_saturacion_oxigeno(result.porcentaje)
-        }, 3000);
+        crear_tabla(contenedor2, datos2, encabezados2, tamanos2);
+
+        // cambiar_saturacion_oxigeno(<= data.porcentaje %>)
+
+        // setInterval(async function () {
+        //     const result = await fetch("http://35.221.7.73:3000/informacion").then(response => response.json()).then(data => data);
+        //     cambiar_saturacion_oxigeno(result.porcentaje)
+        // }, 3000);
     </script>
 </body>
 

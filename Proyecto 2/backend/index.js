@@ -31,11 +31,9 @@ const { getConnection } = require("./src/database");
 // Rutas
 app.get("/", async (req, res) => {
   try {
-    const result = await fetch("http://localhost:3000/informacion").then(response => response.json()).then(data => data);
-    console.log(result);
-
     res.render('frontend.ejs', {
-      data: result,
+      ruta_request: 'http://localhost:3000/',
+      logueado: false,
     });
   } catch (error) {
     res.status(500).json({ code: 500, message: error });
