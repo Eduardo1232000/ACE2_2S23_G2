@@ -42,15 +42,3 @@ usuario varchar(20),
 fecha datetime,
 foreign key (usuario) references usuario(usuario)
 );
-
-drop table if exists estadisticos;
-create table if not exists estadisticos (
-    id int primary key auto_increment,
-    usuario varchar(20),
-    fecha datetime,
-    categoria varchar(20),
-    oxigeno int,
-    ritmo_cardiaco int,
-    es_horario_suenio bool,
-    foreign key (usuario) references usuario(usuario)
-);
