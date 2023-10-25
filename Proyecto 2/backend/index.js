@@ -29,7 +29,7 @@ app.use(morgan("dev"));
 const { getConnection } = require("./src/database");
 let estaLogueado = false;
 let data_usuario = [];
-const RUTA_REQUEST = 'http://localhost:3000/';
+const RUTA_REQUEST = 'http://35.245.231.94:3000/';
 
 // Rutas
 app.get("/", async (req, res) => {
