@@ -313,6 +313,15 @@
                 .catch((error) => {
                     console.error("Error:", error);
                 });
+
+            fetch('<%= ruta_request %>' + 'lista-actividades/' + sessionStorage.getItem('sessionUsuario') + '/' + fecha_inicial + "/" + fecha_final)
+                .then((response) => response.json())
+                .then((data) => {
+                    mostrar_tabla_lista_actividades(data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         });
 
         // FUNCION PARA CAMBIAR EL PORCENTAJE DE LA TABLA
@@ -348,57 +357,58 @@
 
         }
 
-        // // Crear encabezado
-        // function crear_encabezado(cabecera, titulo, porcentaje_tamano) {
-        //     const encabezado = document.createElement('th'); //COLUMNA 1
-        //     encabezado.textContent = titulo;
-        //     encabezado.style.width = porcentaje_tamano
-        //     encabezado.style.backgroundColor = "lightblue";
-        //     encabezado.style.border = "1px solid black";
-        //     encabezado.style.textAlign = "center"
-        //     cabecera.appendChild(encabezado);
-        // }
+        // TABLA: A TRAVES DE ESTA FUNCION SE CREA EL ENCABEZADO
+        function crear_encabezado(cabecera, titulo, porcentaje_tamano) {
+            const encabezado = document.createElement('th'); //COLUMNA 1
+            encabezado.textContent = titulo;
+            encabezado.style.width = porcentaje_tamano
+            encabezado.style.backgroundColor = "lightblue";
+            encabezado.style.border = "1px solid black";
+            encabezado.style.textAlign = "center"
+            cabecera.appendChild(encabezado);
+        }
+        // TABLA: ESTRUCTURA DE LA TABLA
+        function crear_tabla(contenedor, datos, encabezados, tamanos_encabezado) {
+            const tabla = document.createElement('table');          //CREAMOS LA TABLA
+            const cabecera = document.createElement('thead');       //CREAMOS LOS HEAD
+            const cabeceraFila = document.createElement('tr');      //NUEVA FILA
 
-        // function crear_tabla(contenedor, datos, encabezados, tamanos_encabezado) {
-        //     const tabla = document.createElement('table');          //CREAMOS LA TABLA
-        //     const cabecera = document.createElement('thead');       //CREAMOS LOS HEAD
-        //     const cabeceraFila = document.createElement('tr');      //NUEVA FILA
+            //CREAMOS CADA ENCABEZADO
+            let encabezado = encabezados.split(",");
+            let tamanos_enc = tamanos_encabezado.split(",");
+            for (var i = 0; i < encabezado.length; i++) {
+                crear_encabezado(cabeceraFila, encabezado[i], tamanos_enc[i]);
+            }
+            //AGREGAMOS EL CONTENIDO
+            const cuerpo = document.createElement('tbody');         //CONTENIDO DE LA TABLA (TBODY)
+            separado = datos.split(";")                             //SEPARAMOS LA CADENA POR CADA ";"
+            separado.forEach((fila) => {                            //RECORREMOS LA CADENA
+                const filaTabla = document.createElement('tr');     //NUEVA FILA
+                let datos_separados = fila.split(",")               //SEPARAMOS LA CADENA POR ","
+                datos_separados.forEach((val) => {                   //RECORREMOS LA CADENA NUEVA
+                    const td1 = document.createElement('td');       //CREAMOS LA CELDA
+                    let archivo_nombre = val
+                    td1.textContent = archivo_nombre;
+                    td1.style.width = "35%"
+                    td1.style.border = "1px solid black";
+                    filaTabla.appendChild(td1);                     //AGREGAMOS LA CELDA A LA FILA
 
-        //     //CREAMOS CADA ENCABEZADO
-        //     let encabezado = encabezados.split(",");
-        //     let tamanos_enc = tamanos_encabezado.split(",");
-        //     for (var i = 0; i < encabezado.length; i++) {
-        //         crear_encabezado(cabeceraFila, encabezado[i], tamanos_enc[i]);
-        //     }
-        //     //AGREGAMOS EL CONTENIDO
-        //     const cuerpo = document.createElement('tbody');         //CONTENIDO DE LA TABLA (TBODY)
-        //     separado = datos.split(";")                             //SEPARAMOS LA CADENA POR CADA ";"
-        //     separado.forEach((fila) => {                            //RECORREMOS LA CADENA
-        //         const filaTabla = document.createElement('tr');     //NUEVA FILA
-        //         let datos_separados = fila.split(",")               //SEPARAMOS LA CADENA POR ","
-        //         datos_separados.forEach((val) => {                   //RECORREMOS LA CADENA NUEVA
-        //             const td1 = document.createElement('td');       //CREAMOS LA CELDA
-        //             let archivo_nombre = val
-        //             td1.textContent = archivo_nombre;
-        //             td1.style.width = "35%"
-        //             td1.style.border = "1px solid black";
-        //             filaTabla.appendChild(td1);                     //AGREGAMOS LA CELDA A LA FILA
+                });
 
-        //         });
+                cuerpo.appendChild(filaTabla);                      //AGREGAMOS LA FILA AL CUERPO
+            });
+            tabla.appendChild(cuerpo);                              //AGREGAMOS EL CUERPO A LA TABLA
 
-        //         cuerpo.appendChild(filaTabla);                      //AGREGAMOS LA FILA AL CUERPO
-        //     });
-        //     tabla.appendChild(cuerpo);                              //AGREGAMOS EL CUERPO A LA TABLA
+            cabecera.appendChild(cabeceraFila);                     //AGREGAMOS LOS ENCABEZADOS AL HEAD
+            tabla.appendChild(cabecera);                            //AGREGAMOS EL HEAD A LA TABLA
+            tabla.style.border = "1px solid black";
 
-        //     cabecera.appendChild(cabeceraFila);                     //AGREGAMOS LOS ENCABEZADOS AL HEAD
-        //     tabla.appendChild(cabecera);                            //AGREGAMOS EL HEAD A LA TABLA
-        //     tabla.style.border = "1px solid black";
+            contenedor.appendChild(tabla);                          //AGREGAMOS LA TABLA AL DIV
+            contenedor.style.overflow = "auto";
+            contenedor.style.maxHeight = "400px";
+        }
 
-        //     contenedor.appendChild(tabla);                          //AGREGAMOS LA TABLA AL DIV
-        //     contenedor.style.overflow = "auto";
-        //     contenedor.style.maxHeight = "400px";
-        // }
-
+        // MUESTRA LOS HISTORICOS PARA EL OXIGENO Y EL RITMO CARDIACO
         function mostrar_grafico_historico(titulos_eje_x, valores_hist_oxigeno, valores_hist_frecuencia) {
 
             const graf_hist_oxigeno = document.getElementById("grafica_oxigeno");
@@ -502,6 +512,13 @@
                 },
             });
 
+        }
+        // MUESTRA LA TABLA HISTORICO DEL REGISTRO DE ACTIVIDADES
+        function mostrar_tabla_lista_actividades(datos) {
+            contenedor_reporte1 = document.getElementById("lista_actividades")
+            let encabezados1 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'  //ENCABEZADOS
+            let tamanos1 = '15%,12%,12%,12%,12%,12%,12%,12%'                                                                //TAMAÑOS % DE ENCABEZADO
+            crear_tabla(contenedor_reporte1, datos, encabezados1, tamanos1);
         }
 
         // //CREAR GRAFICA DE ACTIVIDAD FISICA LINEAL
@@ -709,23 +726,6 @@
         //         },
         //     },
         // });
-
-        // //EJEMPLO DE USO CREAR TABLA
-        // contenedor_reporte1 = document.getElementById("lista_actividades")
-        // let encabezados1 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'  //ENCABEZADOS
-        // let tamanos1 = '15%,12%,12%,12%,12%,12%,12%,12%'                                                                //TAMAÑOS % DE ENCABEZADO
-        // let datos = 'user1,1,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'                                     //DATOS SEPARADOS POR "," Y ENTRE FILAS POR ";"
-        // datos += 'user2,2,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,si;'
-        // datos += 'user3,3,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'                                        //BORRAR CUANDO NO SE USE
-        // datos += 'user4,4,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos += 'user5,5,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos += 'user6,6,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos += 'user7,7,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos += 'user8,8,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos += 'user9,9,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos += 'user10,10,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos += 'user11,11,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // crear_tabla(contenedor_reporte1, datos, encabezados1, tamanos1)
 
         // contenedor2 = document.getElementById("calendario_actividades")                                                  //MISMA FUNCION PARA OTRO REPORTE
         // let encabezados2 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'      //DEBE TENER EL MISMO NUMERO DE DATOS QUE ENCABEZADOS
