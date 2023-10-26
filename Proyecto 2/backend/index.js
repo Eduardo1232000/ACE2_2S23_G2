@@ -133,12 +133,12 @@ app.post("/registrar", async (req, res) => {
     ]);
 
     if (result.affectedRows == 0) {
-      res.json({ code: 500, message: "No se pudo registrar" });
+      res.status(500).json({ code: 500, message: "No se pudo registrar" });
     }
 
     res.json({ code: 200, message: "Registro exitoso" });
   } catch (error) {
-    res.json({ code: 500, message: error });
+    res.status(500).json({ code: 500, message: error });
   }
 });
 
@@ -154,10 +154,10 @@ app.get("/login/:usuario/:pass", async (req, res) => {
     if (results.length > 0) {
       res.json({ code: 200, message: "¡Bienvenido!", session: results[0].usuario });
     } else {
-      res.json({ code: 500, message: "Usuario o contraseña incorrecta" });
+      res.status(500).json({ code: 500, message: "Usuario o contraseña incorrecta" });
     }
   } catch (error) {
-    res.json({ code: 500, message: error });
+    res.status(500).json({ code: 500, message: error });
   }
 });
 
