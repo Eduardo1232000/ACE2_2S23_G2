@@ -27,7 +27,7 @@ app.use(morgan("dev"));
 
 // importe de libreria para la conexion a la base de datos
 const { getConnection } = require("./src/database");
-const RUTA_REQUEST = 'http://localhost:3000/';
+const RUTA_REQUEST = 'http://35.245.231.94:3000/';
 
 // Variable para determinar los rangos de actividades
 let rango_actividades = {
