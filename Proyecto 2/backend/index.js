@@ -223,6 +223,33 @@ app.get("/lista-actividades-lineal/:usuario/:fecha_desde/:fecha_hasta", async (r
 
 });
 
+app.get("/cantidad-actividades-durante-dia/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
+
+  const fecha_desde = req.params.fecha_desde;
+  const fecha_hasta = req.params.fecha_hasta;
+  const usuario = req.params.usuario;
+
+  const conexion = getConnection();
+  const query = `SELECT ho.id, ho.porcentaje, ho.frecuencia, u.usuario, DATE_FORMAT(ho.fecha, '%d/%m/%Y %H:%i:%s') AS fecha,
+  CASE WHEN u.pulmonar = TRUE THEN 0 WHEN u.cardiovascular = TRUE THEN 1 WHEN u.diabetes = TRUE THEN 2 WHEN u.autoinmune = TRUE THEN 3 ELSE 4 END AS indice,
+  CASE
+    WHEN (DAYOFWEEK(ho.fecha) = u.horarioSue + 1 AND HOUR(ho.fecha) >= 23) OR (DAYOFWEEK(ho.fecha) = (u.horarioSue + 2) AND TIME(ho.fecha) <= '08:30:00')
+    THEN True ELSE False
+  END AS es_horario_suenio
+  FROM historialOxigeno ho
+  INNER JOIN usuario u ON u.usuario = ho.usuario
+  WHERE u.usuario = ? AND ho.fecha >= ? AND ho.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+  ORDER BY fecha DESC`;
+
+  try {
+    const [results, fields] = await conexion.query(query, [usuario, fecha_desde, fecha_hasta]);
+    res.json(formatearListaActividadesCantidad(results));
+  } catch (error) {
+    res.status(500).json({ code: 500, message: error });
+  }
+
+});
+
 app.post("/registrar", async (req, res) => {
   const data = req.body;
   const conexion = getConnection();
@@ -398,6 +425,42 @@ function formatearListaActividadesColor(result) {
   });
 
   return color;
+}
+
+function formatearListaActividadesCantidad(result) {
+
+  let respuesta = {
+    intensa: 0,
+    normal: 0,
+    reposo: 0,
+    irregular_suenio: 0
+  };
+
+  result.forEach(element => {
+
+    // Se analiza unicamente la irregularidad del suenio
+    if (element.es_horario_suenio) {
+      if ((element.frecuencia < rango_actividades[element.indice].irregular_suenio[0] || element.frecuencia > rango_actividades[element.indice].irregular_suenio[1]) &&
+        (element.porcentaje >= rango_actividades[element.indice].irregular_suenio[2])) {
+        respuesta.irregular_suenio += 1;
+      }
+    }
+    // Se analiza si la actividad fisica es intensa, normal, reposo
+    else {
+      if ((element.frecuencia > rango_actividades[element.indice].intensa[0] && element.frecuencia <= rango_actividades[element.indice].intensa[1]) &&
+        (element.porcentaje >= rango_actividades[element.indice].intensa[2])) {
+        respuesta.intensa += 1;
+      } else if ((element.frecuencia >= rango_actividades[element.indice].normal[0] && element.frecuencia <= rango_actividades[element.indice].normal[1]) &&
+        (element.porcentaje >= rango_actividades[element.indice].normal[2])) {
+        respuesta.normal += 1;
+      } else if ((element.frecuencia >= rango_actividades[element.indice].reposo[0] && element.frecuencia <= rango_actividades[element.indice].reposo[1]) &&
+        (element.porcentaje >= rango_actividades[element.indice].reposo[2])) {
+        respuesta.reposo += 1;
+      }
+    }
+  });
+
+  return [respuesta.intensa, respuesta.normal, respuesta.reposo, respuesta.irregular_suenio];
 }
 
 const port = 3000;

@@ -331,6 +331,15 @@
                 .catch((error) => {
                     console.error("Error:", error);
                 });
+
+            fetch('<%= ruta_request %>' + 'cantidad-actividades-durante-dia/' + sessionStorage.getItem('sessionUsuario') + '/' + fecha_inicial + "/" + fecha_final)
+                .then((response) => response.json())
+                .then((data) => {
+                    mostrar_grafica_barras_actividad(data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         });
 
         // FUNCION PARA CAMBIAR EL PORCENTAJE DE LA TABLA
@@ -591,53 +600,60 @@
                 },
             });
         }
+        // MUESTRA LA GRAFICA DE ACTIVIDAD FISICA ACUMULADA (BARRAS)
+        function mostrar_grafica_barras_actividad(valores_eje_y) {
 
-        // //CREAR GRAFICA DE ACTIVIDAD FISICA ACUMULADA (BARRAS)
-        // const graf_barras_actividad = document.getElementById("grafica_barras_actividad");
-        // var ejey_actividad_fisica_acum = [10, 20, 30, 40];   //CAMBIAR LOS DATOS POR LOS DE LA BASE
-        // var ejeX_actividad_fisica = ["Actividad Fisica Inteso", "Actividad fisica normal", "Sin actividad fisica o reposo", "Irregularidad sueño"]
-        // new Chart(graf_barras_actividad, {
-        //     type: "bar",
-        //     data: {
-        //         labels: ejeX_actividad_fisica,
-        //         datasets: [
-        //             {
-        //                 label: "Actividad Fisica",
-        //                 data: ejey_actividad_fisica_acum,
-        //                 tension: 0.5,
-        //                 backgroundColor: [
-        //                     'orange', 'green', 'blue', 'red' // Colores para cada segmento de la línea
-        //                 ],
-        //             },
-        //         ],
-        //     },
-        //     options: {
-        //         plugins: {
+            const graf_barras_actividad = document.getElementById("grafica_barras_actividad");
 
-        //             title: {
-        //                 display: true,
-        //                 text: 'Actividad Fisica',
-        //                 font: {
-        //                     size: 24 // Cambia el tamaño del título aquí
-        //                 }
-        //             }
-        //         },
-        //         scales: {
-        //             y: {
-        //                 min: 0,
-        //                 grid: {
-        //                     display: false
-        //                 }
-        //             },
-        //             x: {
-        //                 ticks: { color: 'rgb(10, 10, 10)' },
-        //                 grid: {
-        //                     display: false
-        //                 }
-        //             }
-        //         },
-        //     },
-        // });
+            // Destruir el grafico
+            const existingChart1 = Chart.getChart(graf_barras_actividad);
+            if (existingChart1) {
+                existingChart1.destroy();
+            }
+
+            new Chart(graf_barras_actividad, {
+                type: "bar",
+                data: {
+                    labels: ["Actividad Fisica Inteso", "Actividad fisica normal", "Sin actividad fisica o reposo", "Irregularidad sueño"],
+                    datasets: [
+                        {
+                            label: "Actividad Fisica",
+                            data: valores_eje_y,
+                            tension: 0.5,
+                            backgroundColor: [
+                                'orange', 'green', 'blue', 'red' // Colores para cada segmento de la línea
+                            ],
+                        },
+                    ],
+                },
+                options: {
+                    plugins: {
+
+                        title: {
+                            display: true,
+                            text: 'Actividad Fisica',
+                            font: {
+                                size: 24 // Cambia el tamaño del título aquí
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            ticks: { color: 'rgb(10, 10, 10)' },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                },
+            });
+        }
 
         //CREAR GRAFICA DE 10 DIAS MAS ACTIVOS DE MAYOR A MENOR
         // const graf_mayor_menor = document.getElementById("grafica_dias_mayor_menor");
