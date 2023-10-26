@@ -18,10 +18,10 @@
 <body>
     <nav id="nav_front">
         <label id="titulo_nav"> Proyecto 2 </label>
-        <button id="boton_registro_nav" <%=!logueado ? '' : 'hidden' %>>Registro</button>
-        <button id="boton_login_nav" <%=!logueado ? '' : 'hidden' %>>Iniciar Sesion</button>
-        <button id="boton_vistas_nav" <%=logueado ? '' : 'hidden' %>>Vistas</button>
-        <button id="btnCerrarSesion" <%=logueado ? '' : 'hidden' %>>Cerrar Sesion</button>
+        <button id="boton_registro_nav">Registro</button>
+        <button id="boton_login_nav">Iniciar Sesion</button>
+        <button id="boton_vistas_nav">Vistas</button>
+        <button id="btnCerrarSesion">Cerrar Sesion</button>
     </nav>
     <div id="login_dash">
         <div id="cuadro_fondo"></div>
@@ -143,10 +143,32 @@
 
     <script>
 
+        // Verificar si el usuario ha iniciado sesión utilizando sessionStorage
+        var sessionUsuario = sessionStorage.getItem('sessionUsuario');
+
+        // Obtener los botones por su ID
+        var botonRegistro = document.getElementById('boton_registro_nav');
+        var botonLogin = document.getElementById('boton_login_nav');
+        var botonVistas = document.getElementById('boton_vistas_nav');
+        var botonCerrarSesion = document.getElementById('btnCerrarSesion');
+
+        // Comprobar si el usuario ha iniciado sesión y ocultar o mostrar los botones apropiados
+        if (sessionUsuario) {
+            botonRegistro.setAttribute('hidden', true);
+            botonLogin.setAttribute('hidden', true);
+            botonVistas.removeAttribute('hidden');
+            botonCerrarSesion.removeAttribute('hidden');
+        } else {
+            botonVistas.setAttribute('hidden', true);
+            botonCerrarSesion.setAttribute('hidden', true);
+            botonRegistro.removeAttribute('hidden');
+            botonLogin.removeAttribute('hidden');
+        }
+
         // SE MUESTRA LA VISTA DEL LOGIN SIEMPRE QUE SE ACCEDA O ACTUALICE LA PAGINA PRINCIPAL
-        document.getElementById("vistas").style.display = "<%= logueado ? 'block' : 'none' %>";
+        document.getElementById("vistas").style.display = sessionUsuario ? "block" : "none";
         document.getElementById("registro").style.display = "none";
-        document.getElementById("login_dash").style.display = "<%= logueado ? 'none' : 'block' %>";
+        document.getElementById("login_dash").style.display = sessionUsuario ? "none" : "block";
 
         document.getElementById("boton_tiempo_real").style.backgroundColor = "#BEEDC7";
         document.getElementById("vista_historica").style.display = "none";
@@ -200,6 +222,7 @@
                         allowOutsideClick: false
                     }).then((result) => {
                         if (result.isConfirmed && data.code == 200) {
+                            sessionStorage.setItem('sessionUsuario', data.session);
                             location.reload();
                         }
                     });
@@ -260,18 +283,8 @@
         });
         //BOTON CERRAR SESION
         document.getElementById("btnCerrarSesion").addEventListener("click", function (event) {
-
-            //GUARDARLO EN LA BASE DE DATOS
-            fetch('<%= ruta_request %>' + 'cerrar-sesion', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    location.reload();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+            sessionStorage.clear();
+            location.reload();
         });
 
         //BOTON TIEMPO REAL
@@ -292,7 +305,7 @@
         document.getElementById("btnConsultar").addEventListener("click", function (event) {
             let fecha_inicial = document.getElementById("txtFechaInicial").value;
             let fecha_final = document.getElementById("txtFechaFinal").value;
-            fetch('<%= ruta_request %>' + 'informacion' + '/' + fecha_inicial + "/" + fecha_final)
+            fetch('<%= ruta_request %>' + 'informacion/' + sessionStorage.getItem('sessionUsuario') + '/' + fecha_inicial + "/" + fecha_final)
                 .then((response) => response.json())
                 .then((data) => {
                     mostrar_grafico_historico(data.titulos_eje_x, data.valores_eje_y, data.valores_eje_y_f);
@@ -727,11 +740,11 @@
 
         setInterval(async function () {
 
-            if (<%= logueado %>){
-            const result = await fetch('<%= ruta_request %>' + 'informacion').then(response => response.json()).then(data => data);
-            cambiar_saturacion_oxigeno(result.porcentaje);
-            cambiar_ritmo_cardiaco(result.frecuencia);
-        }
+            if (sessionStorage.getItem('sessionUsuario')) {
+                const result = await fetch('<%= ruta_request %>' + 'informacion/' + sessionStorage.getItem('sessionUsuario')).then(response => response.json()).then(data => data);
+                cambiar_saturacion_oxigeno(result.porcentaje);
+                cambiar_ritmo_cardiaco(result.frecuencia);
+            }
 
         }, 3000);
     </script>
