@@ -314,10 +314,19 @@
                     console.error("Error:", error);
                 });
 
-            fetch('<%= ruta_request %>' + 'lista-actividades/' + sessionStorage.getItem('sessionUsuario') + '/' + fecha_inicial + "/" + fecha_final)
+            fetch('<%= ruta_request %>' + 'lista-actividades-tabla/' + sessionStorage.getItem('sessionUsuario') + '/' + fecha_inicial + "/" + fecha_final)
                 .then((response) => response.json())
                 .then((data) => {
                     mostrar_tabla_lista_actividades(data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+
+            fetch('<%= ruta_request %>' + 'lista-actividades-lineal/' + sessionStorage.getItem('sessionUsuario') + '/' + fecha_inicial + "/" + fecha_final)
+                .then((response) => response.json())
+                .then((data) => {
+                    mostrar_grafica_lineal_actividad(data.titulos_eje_x, data.valores_eje_y, data.color_valores);
                 })
                 .catch((error) => {
                     console.error("Error:", error);
@@ -414,13 +423,13 @@
             const graf_hist_oxigeno = document.getElementById("grafica_oxigeno");
             const graf_hist_cardiaco = document.getElementById("grafica_ritmo_cardiaco");
 
-            // Destruir el gráfico del oxigeno
+            // Destruir el grafico del oxigeno
             const existingChart1 = Chart.getChart(graf_hist_oxigeno);
             if (existingChart1) {
                 existingChart1.destroy();
             }
 
-            // Destruir el gráfico del ritmo cardiaco
+            // Destruir el grafico del ritmo cardiaco
             const existingChart2 = Chart.getChart(graf_hist_cardiaco);
             if (existingChart2) {
                 existingChart2.destroy();
@@ -527,22 +536,28 @@
             crear_tabla(contenedor_reporte1, datos, encabezados1, tamanos1);
         }
         // MUESTA LA GRAFICA LINEAL DEL REGISTRO DE ACTIVIDADES
-        function mostrar_grafica_lineal_actividad(eje_y, colores_actividad_fisica) {
+        function mostrar_grafica_lineal_actividad(titulos_eje_x, valores_eje_y, colores_valor) {
+
             const graf_lineal_actividad = document.getElementById("grafica_lineal_actividad");
-            var ejey_tiempo_Real = [100, 90, 95, 80, 105, 70, 69, 99, 100, 105]; //CAMBIAR DATOS POR LOS NUEVOS
-            var ejeX_tiempo_Real = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] //NO TOCARLO, SOLO ES PARA QUE MUESTRE 10 DATOS
-            var colores_actividad_fisica = ["orange", "red", "blue", "green", "green", "blue", "orange", "orange", "red", "blue"]   //CAMBIAR POR LOS COLORES DE CADA DATO
+
+            // Destruir el grafico
+            const existingChart1 = Chart.getChart(graf_lineal_actividad);
+            if (existingChart1) {
+                existingChart1.destroy();
+            }
+
+            // Construir el grafico
             new Chart(graf_lineal_actividad, {
                 type: "line",
                 data: {
-                    labels: ejeX_tiempo_Real,
+                    labels: titulos_eje_x,
                     datasets: [
                         {
                             label: "Actividad Fisica",
-                            data: ejey_tiempo_Real,
+                            data: valores_eje_y,
                             tension: 0.5,
                             borderColor: "transparent",
-                            pointBackgroundColor: colores_actividad_fisica,
+                            pointBackgroundColor: colores_valor,
                             fill: 'start',
 
                         },

@@ -59,6 +59,13 @@ let rango_actividades = {
     reposo: [60, 80, 95],
     irregular_suenio: [60, 100, 95]
   },
+  // Sin ninguna enfermedad
+  4: {
+    intensa: [133, 161, 95],
+    normal: [60, 100, 90],
+    reposo: [60, 70, 90],
+    irregular_suenio: [60, 100, 95]
+  },
 };
 
 // Rutas
@@ -144,7 +151,7 @@ app.get("/informacion/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
   }
 });
 
-app.get("/lista-actividades/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
+app.get("/lista-actividades-tabla/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
 
   const fecha_desde = req.params.fecha_desde;
   const fecha_hasta = req.params.fecha_hasta;
@@ -152,7 +159,7 @@ app.get("/lista-actividades/:usuario/:fecha_desde/:fecha_hasta", async (req, res
 
   const conexion = getConnection();
   const query = `SELECT ho.id, ho.porcentaje, ho.frecuencia, u.usuario, DATE_FORMAT(ho.fecha, '%d/%m/%Y %H:%i:%s') AS fecha,
-  CASE WHEN u.pulmonar = TRUE THEN 0 WHEN u.cardiovascular = TRUE THEN 1 WHEN u.diabetes = TRUE THEN 2 WHEN u.autoinmune = TRUE THEN 3 END AS indice,
+  CASE WHEN u.pulmonar = TRUE THEN 0 WHEN u.cardiovascular = TRUE THEN 1 WHEN u.diabetes = TRUE THEN 2 WHEN u.autoinmune = TRUE THEN 3 ELSE 4 END AS indice,
   CASE
     WHEN (DAYOFWEEK(ho.fecha) = u.horarioSue + 1 AND HOUR(ho.fecha) >= 23) OR (DAYOFWEEK(ho.fecha) = (u.horarioSue + 2) AND TIME(ho.fecha) <= '08:30:00')
     THEN True ELSE False
@@ -167,6 +174,51 @@ app.get("/lista-actividades/:usuario/:fecha_desde/:fecha_hasta", async (req, res
     res.json(formatearListaActividades(results));
   } catch (error) {
     res.status(500).json({ code: 500, message: error });
+  }
+
+});
+
+app.get("/lista-actividades-lineal/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
+
+  const fecha_desde = req.params.fecha_desde;
+  const fecha_hasta = req.params.fecha_hasta;
+  const usuario = req.params.usuario;
+
+  const conexion = getConnection();
+  if (fecha_desde == fecha_hasta) {
+    try {
+      const sql = `SELECT DATE_FORMAT(fecha, '%H:00:00') AS hora, ROUND(AVG(porcentaje)) AS porcentaje, ROUND(AVG(frecuencia)) AS frecuencia, COUNT(porcentaje) AS cantidad,
+      CASE WHEN u.pulmonar = TRUE THEN 0 WHEN u.cardiovascular = TRUE THEN 1 WHEN u.diabetes = TRUE THEN 2 WHEN u.autoinmune = TRUE THEN 3 ELSE 4 END AS indice
+      FROM historialOxigeno c
+      INNER JOIN usuario u ON u.usuario = c.usuario
+      WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY) and c.usuario = ?
+      GROUP BY DATE_FORMAT(fecha, '%H:00:00')
+      ORDER BY hora`;
+      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, usuario]);
+      const [valores_eje_y, color_valores] = formatearListaActividadesPorHora(results);
+      console.log(valores_eje_y);
+      console.log(color_valores);
+      res.json({ success: true, titulos_eje_x: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"], valores_eje_y: valores_eje_y, color_valores: color_valores });
+    } catch (error) {
+      res.status(500).json({ code: 500, message: error });
+    }
+  } else {
+    try {
+      const sql = `SELECT DATE_FORMAT(fecha, '%d/%m') AS dia, ROUND(AVG(porcentaje)) AS porcentaje, ROUND(AVG(frecuencia)) AS frecuencia, COUNT(porcentaje) AS cantidad,
+      CASE WHEN u.pulmonar = TRUE THEN 0 WHEN u.cardiovascular = TRUE THEN 1 WHEN u.diabetes = TRUE THEN 2 WHEN u.autoinmune = TRUE THEN 3 ELSE 4 END AS indice
+      FROM historialOxigeno c
+      INNER JOIN usuario u ON u.usuario = c.usuario
+      WHERE c.fecha >= ? AND c.fecha < DATE_ADD(?, INTERVAL 1 DAY) and c.usuario = ?
+      GROUP BY DATE_FORMAT(fecha, '%d/%m')
+      ORDER BY dia`;
+      const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, usuario]);
+      const titulos_eje_x = results.map(item => item.dia);
+      const valores_eje_y = results.map(item => item.cantidad);
+      const color_valores = formatearListaActividadesColor(results);
+      res.json({ success: true, titulos_eje_x: titulos_eje_x, valores_eje_y: valores_eje_y, color_valores: color_valores });
+    } catch (error) {
+      res.status(500).json({ code: 500, message: error });
+    }
   }
 
 });
@@ -295,6 +347,57 @@ function formatearListaActividades(result) {
   });
 
   return respuesta;
+}
+
+function formatearListaActividadesPorHora(result) {
+  let cantidad = [];
+  let color = [];
+
+  for (let i = 0; i < 24; i++) {
+    const valor = result.find((element) => element["hora"] === calcularHora(i));
+    if (valor === undefined) {
+      cantidad.push(0);
+      color.push("gray");
+    } else {
+      cantidad.push(valor.cantidad);
+      if ((valor.frecuencia > rango_actividades[valor.indice].intensa[0] && valor.frecuencia <= rango_actividades[valor.indice].intensa[1]) &&
+        (valor.porcentaje >= rango_actividades[valor.indice].intensa[2])) {
+        color.push("orange");
+      } else if ((valor.frecuencia >= rango_actividades[valor.indice].normal[0] && valor.frecuencia <= rango_actividades[valor.indice].normal[1]) &&
+        (valor.porcentaje >= rango_actividades[valor.indice].normal[2])) {
+        color.push("green");
+      } else if ((valor.frecuencia >= rango_actividades[valor.indice].reposo[0] && valor.frecuencia <= rango_actividades[valor.indice].reposo[1]) &&
+        (valor.porcentaje >= rango_actividades[valor.indice].reposo[2])) {
+        color.push("blue");
+      } else {
+        color.push("purple");
+      }
+    }
+  }
+
+  return [cantidad, color];
+}
+
+function formatearListaActividadesColor(result) {
+
+  let color = [];
+
+  result.forEach(element => {
+    if ((element.frecuencia > rango_actividades[element.indice].intensa[0] && element.frecuencia <= rango_actividades[element.indice].intensa[1]) &&
+      (element.porcentaje >= rango_actividades[element.indice].intensa[2])) {
+      color.push("orange");
+    } else if ((element.frecuencia >= rango_actividades[element.indice].normal[0] && element.frecuencia <= rango_actividades[element.indice].normal[1]) &&
+      (element.porcentaje >= rango_actividades[element.indice].normal[2])) {
+      color.push("green");
+    } else if ((element.frecuencia >= rango_actividades[element.indice].reposo[0] && element.frecuencia <= rango_actividades[element.indice].reposo[1]) &&
+      (element.porcentaje >= rango_actividades[element.indice].reposo[2])) {
+      color.push("blue");
+    } else {
+      color.push("purple");
+    }
+  });
+
+  return color;
 }
 
 const port = 3000;
