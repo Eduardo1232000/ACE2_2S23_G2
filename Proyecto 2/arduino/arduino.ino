@@ -6,7 +6,7 @@ SoftwareSerial miBT(10, 11);
 char dato = 0;
 
 // Variables para el sensor
-#define REPORTING_PERIOD_MS     1000
+#define REPORTING_PERIOD_MS     3000
 
 PulseOximeter pox;
 uint32_t tsLastReport = 0;
@@ -45,12 +45,7 @@ void loop() {
 
       // Verificar si las lecturas son válidas y han cambiado
       if (heartRate > 0 && spo2 > 0 && spo2 <= 100) {
-          //Serial.print("Frecuencia Cardíaca: ");
-          //Serial.print(heartRate);
-          //Serial.print(" bpm / Nivel de Oxígeno en Sangre: ");
-          //Serial.print(spo2);
-          //Serial.println("%");
-          String dato = "{\"porcentaje\":" + String(spo2) + "}\n";
+          String dato = "\"porcentaje\":" + String(spo2) + ",\"frecuencia\":" + String(heartRate) + "\n";
           miBT.print(dato);
 
           // Actualizar las lecturas anteriores
