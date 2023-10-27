@@ -340,6 +340,15 @@
                 .catch((error) => {
                     console.error("Error:", error);
                 });
+
+            fetch('<%= ruta_request %>' + 'cantidad-actividad-reposo-normal/' + sessionStorage.getItem('sessionUsuario') + '/' + fecha_inicial + "/" + fecha_final)
+                .then((response) => response.json())
+                .then((data) => {
+                    mostrar_grafica_reposo_actividad_normal(data.titulos_eje_x, data.valores_eje_y_reposo, data.valores_eje_y_normal);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         });
 
         // FUNCION PARA CAMBIAR EL PORCENTAJE DE LA TABLA
@@ -577,7 +586,7 @@
 
                         title: {
                             display: true,
-                            text: 'Actividad Fisica',
+                            text: 'Promedio Actividad Fisica',
                             font: {
                                 size: 24 // Cambia el tamaño del título aquí
                             }
@@ -614,7 +623,7 @@
             new Chart(graf_barras_actividad, {
                 type: "bar",
                 data: {
-                    labels: ["Actividad Fisica Inteso", "Actividad fisica normal", "Sin actividad fisica o reposo", "Irregularidad sueño"],
+                    labels: ["Actividad fisica intesa", "Actividad fisica normal", "Sin actividad fisica o reposo", "Irregularidad sueño"],
                     datasets: [
                         {
                             label: "Actividad Fisica",
@@ -654,7 +663,6 @@
                 },
             });
         }
-
         //CREAR GRAFICA DE 10 DIAS MAS ACTIVOS DE MAYOR A MENOR
         // const graf_mayor_menor = document.getElementById("grafica_dias_mayor_menor");
         // var ejey_oxigeno_top = [100, 98, 97, 98, 90, 95, 96, 100, 99, 99, 97, 95];  //CAMBIAR
@@ -707,63 +715,70 @@
         //         },
         //     },
         // });
+        // MUESTRA LA GRAFICA DE REPOSO VS ACTIVIDAD NORMAL
+        function mostrar_grafica_reposo_actividad_normal(titulos_eje_x, valores_eje_y_reposo, valores_eje_y_normal) {
+            const graf_act_fisica_vs_reposo = document.getElementById("grafica_barras_reposo_vs_ejercicio");
 
-        // //CREAR GRAFICA DE REPOSO VS ACTIVIDAD NORMAL
-        // const graf_act_fisica_vs_reposo = document.getElementById("grafica_barras_reposo_vs_ejercicio");
-        // var ejey_act_normal = [100, 98, 97, 98, 90, 95, 96, 100, 99, 99, 97, 95];   //CAMBIAR
-        // var ejey_act_reposo = [100, 95, 90, 85, 83, 82, 80, 78, 77, 73, 70, 69];     //CAMBIAR
-        // new Chart(graf_act_fisica_vs_reposo, {
-        //     type: "line",
-        //     data: {
-        //         labels: ejeX,
-        //         datasets: [
-        //             {
-        //                 label: "Actividad Fisica Reposo",
-        //                 data: ejey_act_reposo,
-        //                 tension: 0.5,
-        //                 borderColor: 'blue',
-        //                 pointBackgroundColor: 'blue',
-        //                 fill: 'start',
-        //                 backgroundColor: '#6795D3',
-        //             },
-        //             {
-        //                 label: "Actividad Fisica Normal",
-        //                 data: ejey_act_normal,
-        //                 tension: 0.5,
-        //                 borderColor: 'green',
-        //                 pointBackgroundColor: 'green',
-        //                 fill: 'start',
-        //                 backgroundColor: '#67D386',
-        //             },
-        //         ],
-        //     },
-        //     options: {
-        //         plugins: {
+            // Destruir el grafico
+            const existingChart1 = Chart.getChart(graf_act_fisica_vs_reposo);
+            if (existingChart1) {
+                existingChart1.destroy();
+            }
 
-        //             title: {
-        //                 display: true,
-        //                 text: 'Reposo vs Actividad fisica normal',
-        //                 font: {
-        //                     size: 24 // Cambia el tamaño del título aquí
-        //                 }
-        //             }
-        //         },
-        //         scales: {
-        //             y: {
-        //                 min: 0,
-        //                 grid: {
-        //                     display: false
-        //                 }
-        //             },
-        //             x: {
-        //                 ticks: { color: 'rgb(10, 10, 10)' },
-        //                 grid: {
-        //                     display: false
-        //                 }
-        //             }
-        //         },
-        //     },
-        // });
+            // Construir el grafico
+            new Chart(graf_act_fisica_vs_reposo, {
+                type: "line",
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: "Reposo",
+                            data: valores_eje_y_reposo,
+                            tension: 0.5,
+                            borderColor: 'blue',
+                            pointBackgroundColor: 'blue',
+                            fill: 'start',
+                            backgroundColor: '#6795D3',
+                        },
+                        {
+                            label: "Normal",
+                            data: valores_eje_y_normal,
+                            tension: 0.5,
+                            borderColor: 'green',
+                            pointBackgroundColor: 'green',
+                            fill: 'start',
+                            backgroundColor: '#67D386',
+                        },
+                    ],
+                },
+                options: {
+                    plugins: {
+
+                        title: {
+                            display: true,
+                            text: 'Reposo vs Actividad fisica normal',
+                            font: {
+                                size: 24 // Cambia el tamaño del título aquí
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            ticks: { color: 'rgb(10, 10, 10)' },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                },
+            });
+        }
 
         // contenedor2 = document.getElementById("calendario_actividades")                                                  //MISMA FUNCION PARA OTRO REPORTE
         // let encabezados2 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'      //DEBE TENER EL MISMO NUMERO DE DATOS QUE ENCABEZADOS

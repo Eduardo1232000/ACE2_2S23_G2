@@ -196,8 +196,6 @@ app.get("/lista-actividades-lineal/:usuario/:fecha_desde/:fecha_hasta", async (r
       ORDER BY hora`;
       const [results, fields] = await conexion.query(sql, [fecha_desde, fecha_hasta, usuario]);
       const [valores_eje_y, color_valores] = formatearListaActividadesPorHora(results);
-      console.log(valores_eje_y);
-      console.log(color_valores);
       res.json({ success: true, titulos_eje_x: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"], valores_eje_y: valores_eje_y, color_valores: color_valores });
     } catch (error) {
       res.status(500).json({ code: 500, message: error });
@@ -244,6 +242,34 @@ app.get("/cantidad-actividades-durante-dia/:usuario/:fecha_desde/:fecha_hasta", 
   try {
     const [results, fields] = await conexion.query(query, [usuario, fecha_desde, fecha_hasta]);
     res.json(formatearListaActividadesCantidad(results));
+  } catch (error) {
+    res.status(500).json({ code: 500, message: error });
+  }
+
+});
+
+app.get("/cantidad-actividad-reposo-normal/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
+
+  const fecha_desde = req.params.fecha_desde;
+  const fecha_hasta = req.params.fecha_hasta;
+  const usuario = req.params.usuario;
+
+  const conexion = getConnection();
+  const query = `SELECT ho.id, ho.porcentaje, ho.frecuencia, HOUR(fecha) AS hora, DATE_FORMAT(ho.fecha, '%d/%m') AS dia,
+  CASE WHEN u.pulmonar = TRUE THEN 0 WHEN u.cardiovascular = TRUE THEN 1 WHEN u.diabetes = TRUE THEN 2 WHEN u.autoinmune = TRUE THEN 3 ELSE 4 END AS indice,
+  CASE
+    WHEN (DAYOFWEEK(ho.fecha) = u.horarioSue + 1 AND HOUR(ho.fecha) >= 23) OR (DAYOFWEEK(ho.fecha) = (u.horarioSue + 2) AND TIME(ho.fecha) <= '08:30:00')
+    THEN True ELSE False
+  END AS es_horario_suenio
+  FROM historialOxigeno ho
+  INNER JOIN usuario u ON u.usuario = ho.usuario
+  WHERE u.usuario = ? AND ho.fecha >= ? AND ho.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+  ORDER BY fecha ASC`;
+
+  try {
+    const [results, fields] = await conexion.query(query, [usuario, fecha_desde, fecha_hasta]);
+    const [titulos_eje_x, valores_eje_y_reposo, valores_eje_y_normal] = formatearActividadesNormalReposo(results, (fecha_desde == fecha_hasta));
+    res.json({ success: true, titulos_eje_x: titulos_eje_x, valores_eje_y_reposo: valores_eje_y_reposo, valores_eje_y_normal: valores_eje_y_normal });
   } catch (error) {
     res.status(500).json({ code: 500, message: error });
   }
@@ -461,6 +487,50 @@ function formatearListaActividadesCantidad(result) {
   });
 
   return [respuesta.intensa, respuesta.normal, respuesta.reposo, respuesta.irregular_suenio];
+}
+
+function formatearActividadesNormalReposo(result, es_por_hora) {
+
+  let encabezado = {
+    por_dia: [],
+    por_hora: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"]
+  };
+
+  let res_normal = {
+    por_dia: {},
+    por_hora: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0, 19: 0, 20: 0, 21: 0, 22: 0, 23: 0 }
+  };
+
+  let res_reposo = {
+    por_dia: {},
+    por_hora: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0, 19: 0, 20: 0, 21: 0, 22: 0, 23: 0 }
+  };
+
+  result.forEach(element => {
+    if (element.es_horario_suenio) {
+      // No se hace nada
+    } else if ((element.frecuencia > rango_actividades[element.indice].intensa[0] && element.frecuencia <= rango_actividades[element.indice].intensa[1]) &&
+      (element.porcentaje >= rango_actividades[element.indice].intensa[2])) {
+      // No se hace nada
+    } else if ((element.frecuencia >= rango_actividades[element.indice].normal[0] && element.frecuencia <= rango_actividades[element.indice].normal[1]) &&
+      (element.porcentaje >= rango_actividades[element.indice].normal[2])) {
+      res_normal.por_hora[element.hora] += 1;
+      if (isNaN(res_normal.por_dia[element.dia])) {
+        res_normal.por_dia[element.dia] = 0; // Inicializa con 0 si es NaN
+      }
+      res_normal.por_dia[element.dia] += 1;
+    } else if ((element.frecuencia >= rango_actividades[element.indice].reposo[0] && element.frecuencia <= rango_actividades[element.indice].reposo[1]) &&
+      (element.porcentaje >= rango_actividades[element.indice].reposo[2])) {
+      res_reposo.por_hora[element.hora] += 1;
+      if (isNaN(res_reposo.por_dia[element.dia])) {
+        res_reposo.por_dia[element.dia] = 0; // Inicializa con 0 si es NaN
+      }
+      res_reposo.por_dia[element.dia] += 1;
+    }
+  });
+
+  encabezado.por_dia = Object.keys(res_normal.por_dia);
+  return [(es_por_hora ? encabezado.por_hora : encabezado.por_dia), (es_por_hora ? res_reposo.por_hora : res_reposo.por_dia), (es_por_hora ? res_normal.por_hora : res_normal.por_dia)];
 }
 
 const port = 3000;
