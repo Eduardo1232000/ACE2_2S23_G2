@@ -20,6 +20,7 @@
         <label id="titulo_nav"> Proyecto 2 </label>
         <button id="boton_registro_nav">Registro</button>
         <button id="boton_login_nav">Iniciar Sesion</button>
+        <button id="boton_informacion_nav">Informacion</button>
         <button id="boton_vistas_nav">Vistas</button>
         <button id="btnCerrarSesion">Cerrar Sesion</button>
     </nav>
@@ -140,6 +141,22 @@
         </div>
 
     </div>
+    <div id="informacion">
+        <label class="titulo-info-usuario" style="top: 30%;">Usuario:</label>
+        <label id="txtUsuario" class="valor-info-usuario" style="left: 28%; top: 30%;"></label>
+        <label class="titulo-info-usuario" style="top: 35%;">Nombre:</label>
+        <label id="txtNombre" class="valor-info-usuario" style="left: 28%; top: 35%;"></label>
+        <label class="titulo-info-usuario" style="top: 40%;">Edad:</label>
+        <label id="txtEdad" class="valor-info-usuario" style="left: 25%; top: 40%;"></label>
+        <label class="titulo-info-usuario" style="top: 45%;">Altura:</label>
+        <label id="txtAltura" class="valor-info-usuario" style="left: 26%; top: 45%;"></label>
+        <label class="titulo-info-usuario" style="top: 50%;">Peso:</label>
+        <label id="txtPeso" class="valor-info-usuario" style="left: 25%; top: 50%;"></label>
+        <label class="titulo-info-usuario" style="top: 55%;">Horario de sueño:</label>
+        <label id="txtHorarioSuenio" class="valor-info-usuario" style="left: 36%; top: 55%;"></label>
+        <label class="titulo-info-usuario" style="top: 60%;">Enfermedades:</label>
+        <label id="txtEnfermedades" class="valor-info-usuario" style="left: 33%; top: 60%;"></label>
+    </div>
 
     <script>
 
@@ -151,16 +168,19 @@
         var botonLogin = document.getElementById('boton_login_nav');
         var botonVistas = document.getElementById('boton_vistas_nav');
         var botonCerrarSesion = document.getElementById('btnCerrarSesion');
+        var botonInformacion = document.getElementById('boton_informacion_nav');
 
         // Comprobar si el usuario ha iniciado sesión y ocultar o mostrar los botones apropiados
         if (sessionUsuario) {
             botonRegistro.setAttribute('hidden', true);
             botonLogin.setAttribute('hidden', true);
+            botonInformacion.removeAttribute('hidden');
             botonVistas.removeAttribute('hidden');
             botonCerrarSesion.removeAttribute('hidden');
         } else {
             botonVistas.setAttribute('hidden', true);
             botonCerrarSesion.setAttribute('hidden', true);
+            botonInformacion.setAttribute('hidden', true);
             botonRegistro.removeAttribute('hidden');
             botonLogin.removeAttribute('hidden');
         }
@@ -169,7 +189,9 @@
         document.getElementById("vistas").style.display = sessionUsuario ? "block" : "none";
         document.getElementById("registro").style.display = "none";
         document.getElementById("login_dash").style.display = sessionUsuario ? "none" : "block";
+        document.getElementById("informacion").style.display = "none";
 
+        // SE MUESTRA LA VISTA UNA VEZ LOGUEADO EL USUARIO
         document.getElementById("boton_tiempo_real").style.backgroundColor = "#BEEDC7";
         document.getElementById("vista_historica").style.display = "none";
         document.getElementById("boton_vistas_nav").style.backgroundColor = "#609BB0";
@@ -179,27 +201,59 @@
             document.getElementById("boton_vistas_nav").style.backgroundColor = "#609BB0";
             document.getElementById("boton_registro_nav").style.backgroundColor = "#3C516D";
             document.getElementById("boton_login_nav").style.backgroundColor = "#3C516D";
+            document.getElementById("boton_informacion_nav").style.backgroundColor = "#3C516D";
             document.getElementById("vistas").style.display = "block";
             document.getElementById("registro").style.display = "none";
             document.getElementById("login_dash").style.display = "none";
+            document.getElementById("informacion").style.display = "none";
         });
         //BOTON REGISTRO - VISUALIZACION
         document.getElementById("boton_registro_nav").addEventListener("click", function (event) {
             document.getElementById("boton_vistas_nav").style.backgroundColor = "#3C516D";
             document.getElementById("boton_registro_nav").style.backgroundColor = "#609BB0";
             document.getElementById("boton_login_nav").style.backgroundColor = "#3C516D";
+            document.getElementById("boton_informacion_nav").style.backgroundColor = "#3C516D";
             document.getElementById("vistas").style.display = "none";
             document.getElementById("registro").style.display = "block";
             document.getElementById("login_dash").style.display = "none";
+            document.getElementById("informacion").style.display = "none";
         });
         //BOTON LOGIN - VISUALIZACION
         document.getElementById("boton_login_nav").addEventListener("click", function (event) {
             document.getElementById("boton_vistas_nav").style.backgroundColor = "#3C516D";
             document.getElementById("boton_registro_nav").style.backgroundColor = "#3C516D";
             document.getElementById("boton_login_nav").style.backgroundColor = "#609BB0";
+            document.getElementById("boton_informacion_nav").style.backgroundColor = "#3C516D";
             document.getElementById("vistas").style.display = "none";
             document.getElementById("registro").style.display = "none";
             document.getElementById("login_dash").style.display = "block";
+            document.getElementById("informacion").style.display = "none";
+        });
+        //BOTON INFORMACION - VISUALIZACION
+        document.getElementById("boton_informacion_nav").addEventListener("click", function (event) {
+            document.getElementById("boton_vistas_nav").style.backgroundColor = "#3C516D";
+            document.getElementById("boton_registro_nav").style.backgroundColor = "#3C516D";
+            document.getElementById("boton_login_nav").style.backgroundColor = "#3C516D";
+            document.getElementById("boton_informacion_nav").style.backgroundColor = "#609BB0";
+            document.getElementById("vistas").style.display = "none";
+            document.getElementById("registro").style.display = "none";
+            document.getElementById("login_dash").style.display = "none";
+            document.getElementById("informacion").style.display = "block";
+
+            fetch('<%= ruta_request %>' + 'informacion-usuario/' + sessionStorage.getItem('sessionUsuario'))
+                .then((response) => response.json())
+                .then((data) => {
+                    document.getElementById("txtUsuario").innerHTML = data.usuario;
+                    document.getElementById("txtNombre").innerHTML = data.nombre;
+                    document.getElementById("txtEdad").innerHTML = data.edad + " años";
+                    document.getElementById("txtAltura").innerHTML = data.altura + " metros";
+                    document.getElementById("txtPeso").innerHTML = data.peso + " libras";
+                    document.getElementById("txtHorarioSuenio").innerHTML = data.horario_suenio;
+                    document.getElementById("txtEnfermedades").innerHTML = data.estado_salud;
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         });
 
         //BOTON LOGIN USUARIO
@@ -779,17 +833,6 @@
                 },
             });
         }
-
-        // contenedor2 = document.getElementById("calendario_actividades")                                                  //MISMA FUNCION PARA OTRO REPORTE
-        // let encabezados2 = 'Usuario,No. Registro,Fecha,Categoria Actividad,Oxigeno,Ritmo Cardiaco,Color,Horario Sueño'      //DEBE TENER EL MISMO NUMERO DE DATOS QUE ENCABEZADOS
-        // let tamanos2 = '15%,12%,12%,12%,12%,12%,12%,12%'                                                                    //3 ENCABEZADOS = 3 DATOS POR FILA
-        // let datos2 = 'user1,1,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos2 += 'user1,2,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,si;'
-        // datos2 += 'user1,3,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos2 += 'user1,4,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no;'
-        // datos2 += 'user1,5,23-10-2023,Actividad Intensiva,100%,100ppm,Orange,no'
-
-        // crear_tabla(contenedor2, datos2, encabezados2, tamanos2);
 
         setInterval(async function () {
 

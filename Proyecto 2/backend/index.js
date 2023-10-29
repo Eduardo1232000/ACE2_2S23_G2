@@ -151,6 +151,31 @@ app.get("/informacion/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
   }
 });
 
+app.get("/informacion-usuario/:usuario", async (req, res) => {
+
+  const usuario = req.params.usuario;
+  const conexion = getConnection();
+  const query = `SELECT u.usuario, u.nombre, u.edad, u.altura, u.peso,
+  CONCAT(
+    (CASE WHEN u.pulmonar  THEN "Problemas pulmonares, " ELSE "" END),
+    (CASE WHEN u.cardiovascular THEN "Problemas cardiovasculares, " ELSE "" END),
+    (CASE WHEN u.diabetes THEN "Diabetes, " ELSE "" END),
+    (CASE WHEN u.autoinmune THEN "Autoinmune, " ELSE "" END)
+  ) AS estado_salud,
+  CONCAT(hs.dia, " - ", hs.horas) AS horario_suenio
+  FROM usuario u
+  INNER JOIN horarioSue hs on hs.id = u.horarioSue
+  WHERE u.usuario = ?;`;
+
+  try {
+    const [results, fields] = await conexion.query(query, [usuario]);
+    results[0].estado_salud = results[0].estado_salud.length > 0 ? results[0].estado_salud.slice(0, -2) : "Sano";
+    res.json(results[0]);
+  } catch (error) {
+    res.status(500).json({ code: 500, message: error });
+  }
+});
+
 app.get("/lista-actividades-tabla/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
 
   const fecha_desde = req.params.fecha_desde;
