@@ -492,6 +492,10 @@
             tabla.appendChild(cabecera);                            //AGREGAMOS EL HEAD A LA TABLA
             tabla.style.border = "1px solid black";
 
+            const titulo = document.createElement("h2");
+            titulo.textContent = "Informe Historico";
+
+            contenedor.appendChild(titulo);                          //AGREGAMOS LA TITULO AL DIV
             contenedor.appendChild(tabla);                          //AGREGAMOS LA TABLA AL DIV
             contenedor.style.overflow = "auto";
             contenedor.style.maxHeight = "400px";
@@ -738,6 +742,15 @@
         function mostrar_tabla_mayor_menor_actividad(array_dias, array_data) {
             const divGrafica = document.getElementById("grafica_dias_mayor_menor");
 
+            if (divGrafica) {
+                while (divGrafica.firstChild) {
+                    divGrafica.removeChild(divGrafica.firstChild);
+                }
+            }
+
+            const titulo = document.createElement("h2");
+            titulo.textContent = "Momentos Activos";
+
             const tabla = document.createElement("table");
             const encabezado = document.createElement("tr");
             const sub_encabezado = document.createElement("tr");
@@ -778,6 +791,7 @@
                 tabla.appendChild(fila);
             });
 
+            divGrafica.appendChild(titulo);
             divGrafica.appendChild(tabla);
             divGrafica.style.overflow = "auto";
             divGrafica.style.maxHeight = "400px";
