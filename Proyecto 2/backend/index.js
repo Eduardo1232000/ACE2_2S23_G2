@@ -301,6 +301,53 @@ app.get("/cantidad-actividad-reposo-normal/:usuario/:fecha_desde/:fecha_hasta", 
 
 });
 
+app.get("/mayor-menor-actividad/:usuario/:fecha_desde/:fecha_hasta", async (req, res) => {
+
+  const fecha_desde = req.params.fecha_desde;
+  const fecha_hasta = req.params.fecha_hasta;
+  const usuario = req.params.usuario;
+
+  try {
+    const conexion = getConnection();
+
+    // Se halla el orden de los dias
+    const query_dias_semana = `SELECT DAYOFWEEK(ho.fecha) AS dia, COUNT(ho.fecha) AS cantidad,
+    CASE WHEN DAYOFWEEK(ho.fecha) = 1 THEN "Domingo" WHEN DAYOFWEEK(ho.fecha) = 2 THEN "Lunes" WHEN DAYOFWEEK(ho.fecha) = 3 THEN "Martes"
+    WHEN DAYOFWEEK(ho.fecha) = 4 THEN "Miercoles" WHEN DAYOFWEEK(ho.fecha) = 5 THEN "Jueves" WHEN DAYOFWEEK(ho.fecha) = 6 THEN "Viernes"
+    WHEN DAYOFWEEK(ho.fecha) = 7 THEN "Sabado" END AS nombre_dia
+    FROM historialOxigeno ho
+    INNER JOIN usuario u ON u.usuario = ho.usuario
+    WHERE u.usuario = ? AND ho.fecha >= ? AND ho.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+    GROUP BY dia, nombre_dia
+    ORDER BY cantidad DESC;`;
+    const [res_dias_semana] = await conexion.query(query_dias_semana, [usuario, fecha_desde, fecha_hasta]);
+    const orden_dias = res_dias_semana.map(item => item.dia);
+
+    const query_horas = `SELECT HOUR(ho.fecha) hora, COUNT(ho.fecha) AS cantidad
+    FROM historialOxigeno ho
+    INNER JOIN usuario u ON u.usuario = ho.usuario
+    WHERE u.usuario = ? AND ho.fecha >= ? AND ho.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+    GROUP BY hora
+    ORDER BY cantidad DESC;`;
+    const [res_horas] = await conexion.query(query_horas, [usuario, fecha_desde, fecha_hasta]);
+    const orden_horas = res_horas.map(item => item.hora);
+
+    const query_detalle = `SELECT DAYOFWEEK(ho.fecha) AS dia, HOUR(ho.fecha) hora, ROUND(AVG(porcentaje), 2) AS porcentaje_oxigeno,
+    ROUND(AVG(frecuencia), 2) AS frecuencia_cardiaca, COUNT(ho.fecha) AS cantidad
+    FROM historialOxigeno ho
+    INNER JOIN usuario u ON u.usuario = ho.usuario
+    WHERE u.usuario = ? AND ho.fecha >= ? AND ho.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+    GROUP BY dia, hora
+    ORDER BY dia, hora`;
+    const [res_detalle] = await conexion.query(query_detalle, [usuario, fecha_desde, fecha_hasta]);
+
+    res.json({ success: true, array_dias: res_dias_semana.map(item => item.nombre_dia), data_array: formatearMayorMenorActividades(orden_dias, orden_horas, res_detalle) });
+  } catch (error) {
+    res.status(500).json({ code: 500, message: error });
+  }
+
+});
+
 app.post("/registrar", async (req, res) => {
   const data = req.body;
   const conexion = getConnection();
@@ -556,6 +603,42 @@ function formatearActividadesNormalReposo(result, es_por_hora) {
 
   encabezado.por_dia = Object.keys(res_normal.por_dia);
   return [(es_por_hora ? encabezado.por_hora : encabezado.por_dia), (es_por_hora ? res_reposo.por_hora : res_reposo.por_dia), (es_por_hora ? res_normal.por_hora : res_normal.por_dia)];
+}
+
+function formatearMayorMenorActividades(orden_dias, orden_horas, results) {
+  let respuesta = [];
+  let detalle = results;
+
+  orden_horas.forEach(element => {
+    respuesta.push([element + ":00 - " + ((element + 1) == 24 ? "0" : (element + 1)) + ":00"]);
+  });
+
+  orden_horas.forEach((hora, index) => {
+
+    orden_dias.forEach((dia) => {
+
+      let encontrado = false;
+
+      detalle.forEach((element, index_element) => {
+        if (element.dia == dia && element.hora == hora) {
+          respuesta[index].push(element.porcentaje_oxigeno);
+          respuesta[index].push(element.frecuencia_cardiaca);
+          detalle.splice(index_element, 1);
+          encontrado = true;
+          return true;
+        }
+      });
+
+      if (!encontrado) {
+        respuesta[index].push("");
+        respuesta[index].push("");
+      }
+
+    });
+
+  });
+
+  return respuesta;
 }
 
 const port = 3000;

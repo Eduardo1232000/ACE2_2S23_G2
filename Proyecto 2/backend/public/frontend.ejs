@@ -113,9 +113,8 @@
                 <canvas id="grafica_barras_actividad"></canvas>
             </div>
 
-            <div
+            <div id="grafica_dias_mayor_menor"
                 style=" width: 700px; height: 400px;  margin-right: 100px;  position: absolute; top: 2150px; left: 700px;">
-                <canvas id="grafica_dias_mayor_menor"></canvas>
             </div>
 
             <div
@@ -399,6 +398,15 @@
                 .then((response) => response.json())
                 .then((data) => {
                     mostrar_grafica_reposo_actividad_normal(data.titulos_eje_x, data.valores_eje_y_reposo, data.valores_eje_y_normal);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+
+            fetch('<%= ruta_request %>' + 'mayor-menor-actividad/' + sessionStorage.getItem('sessionUsuario') + '/' + fecha_inicial + "/" + fecha_final)
+                .then((response) => response.json())
+                .then((data) => {
+                    mostrar_tabla_mayor_menor_actividad(data.array_dias, data.data_array);
                 })
                 .catch((error) => {
                     console.error("Error:", error);
@@ -717,58 +725,63 @@
                 },
             });
         }
-        //CREAR GRAFICA DE 10 DIAS MAS ACTIVOS DE MAYOR A MENOR
-        // const graf_mayor_menor = document.getElementById("grafica_dias_mayor_menor");
-        // var ejey_oxigeno_top = [100, 98, 97, 98, 90, 95, 96, 100, 99, 99, 97, 95];  //CAMBIAR
-        // var ejey_cardiaco_top = [100, 95, 90, 85, 83, 82, 80, 78, 77, 73, 70, 69];   //CAMBIAR
-        // new Chart(graf_mayor_menor, {
-        //     type: "line",
-        //     data: {
-        //         labels: ejeX,
-        //         datasets: [
-        //             {
-        //                 label: "Oxigeno",
-        //                 data: ejey_oxigeno_top,
-        //                 tension: 0.5,
-        //                 borderColor: 'skyblue',
-        //                 pointBackgroundColor: 'skyblue',
-        //             },
-        //             {
-        //                 label: "Ritmo Cardiaco",
-        //                 data: ejey_cardiaco_top,
-        //                 tension: 0.5,
-        //                 borderColor: 'orange',
-        //                 pointBackgroundColor: 'orange',
-        //             },
-        //         ],
-        //     },
-        //     options: {
-        //         plugins: {
+        // MUESTRA LA TABLA DE LOS MOMENTOS MAS ACTIVOS
+        function agregar_encabezado_tabla_mayor_menor_actividad(encabezado, titulo, cantidad_columnas_a_unir) {
+            const encabezado_dia = document.createElement('th'); //COLUMNA 1
+            encabezado_dia.textContent = titulo;
+            encabezado_dia.style.backgroundColor = "lightblue";
+            encabezado_dia.style.border = "1px solid black";
+            encabezado_dia.style.textAlign = "center"
+            encabezado_dia.colSpan = cantidad_columnas_a_unir;
+            encabezado.appendChild(encabezado_dia);
+        }
+        function mostrar_tabla_mayor_menor_actividad(array_dias, array_data) {
+            const divGrafica = document.getElementById("grafica_dias_mayor_menor");
 
-        //             title: {
-        //                 display: true,
-        //                 text: 'Horarios mas activos de dia',
-        //                 font: {
-        //                     size: 24 // Cambia el tamaño del título aquí
-        //                 }
-        //             }
-        //         },
-        //         scales: {
-        //             y: {
-        //                 min: 0,
-        //                 grid: {
-        //                     display: false
-        //                 }
-        //             },
-        //             x: {
-        //                 ticks: { color: 'rgb(10, 10, 10)' },
-        //                 grid: {
-        //                     display: false
-        //                 }
-        //             }
-        //         },
-        //     },
-        // });
+            const tabla = document.createElement("table");
+            const encabezado = document.createElement("tr");
+            const sub_encabezado = document.createElement("tr");
+
+            // Se agregan los encabezados
+            agregar_encabezado_tabla_mayor_menor_actividad(encabezado, "Horarios", 1);
+            array_dias.forEach(element => {
+                agregar_encabezado_tabla_mayor_menor_actividad(encabezado, element, 2);
+            });
+
+            // Se agregan los subencabezados
+            agregar_encabezado_tabla_mayor_menor_actividad(sub_encabezado, "-", 1);
+            array_dias.forEach(element => {
+                agregar_encabezado_tabla_mayor_menor_actividad(sub_encabezado, "% Oxigeno", 1);
+                agregar_encabezado_tabla_mayor_menor_actividad(sub_encabezado, "Frecuencia cardiaca", 1);
+            });
+
+            tabla.appendChild(encabezado);
+            tabla.appendChild(sub_encabezado);
+
+            array_data.forEach(element => {
+                const fila = document.createElement("tr");
+
+                const celdaHorario = document.createElement("td");
+                celdaHorario.textContent = element[0];
+                celdaHorario.style.border = "1px solid black";
+                celdaHorario.style.textAlign = "center";
+                fila.appendChild(celdaHorario);
+
+                for (let i = 0; i < array_dias.length * 2; i++) {
+                    const celdaValor = document.createElement("td");
+                    celdaValor.textContent = element[i + 1];
+                    celdaValor.style.border = "1px solid black";
+                    celdaValor.style.textAlign = "center";
+                    fila.appendChild(celdaValor);
+                }
+
+                tabla.appendChild(fila);
+            });
+
+            divGrafica.appendChild(tabla);
+            divGrafica.style.overflow = "auto";
+            divGrafica.style.maxHeight = "400px";
+        }
         // MUESTRA LA GRAFICA DE REPOSO VS ACTIVIDAD NORMAL
         function mostrar_grafica_reposo_actividad_normal(titulos_eje_x, valores_eje_y_reposo, valores_eje_y_normal) {
             const graf_act_fisica_vs_reposo = document.getElementById("grafica_barras_reposo_vs_ejercicio");
