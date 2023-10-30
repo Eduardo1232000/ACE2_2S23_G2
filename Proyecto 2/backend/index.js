@@ -33,37 +33,37 @@ const RUTA_REQUEST = 'http://35.245.231.94:3000/';
 let rango_actividades = {
   // Para problema pulmonar
   0: {
-    intensa: [70, 85, 90],
-    normal: [50, 70, 88],
-    reposo: [60, 80, 88],
+    intensa: [91, 200, 90],
+    normal: [50, 90, 88],
+    reposo: [60, 100, 88],
     irregular_suenio: [60, 100, 88]
   },
   // Para problema cardiovascular
   1: {
-    intensa: [70, 85, 90],
-    normal: [50, 70, 95],
-    reposo: [60, 80, 95],
+    intensa: [96, 220, 90],
+    normal: [76, 95, 95],
+    reposo: [50, 75, 95],
     irregular_suenio: [60, 100, 95]
   },
   // Para problema diabetes
   2: {
-    intensa: [70, 85, 90],
-    normal: [50, 70, 95],
-    reposo: [60, 80, 95],
+    intensa: [131, 220, 90],
+    normal: [101, 130, 95],
+    reposo: [60, 100, 95],
     irregular_suenio: [60, 100, 95]
   },
   // Para problema autoinmune
   3: {
-    intensa: [70, 250, 90],
-    normal: [50, 70, 95],
-    reposo: [60, 80, 95],
+    intensa: [136, 220, 90],
+    normal: [96, 135, 95],
+    reposo: [60, 95, 95],
     irregular_suenio: [60, 100, 95]
   },
   // Sin ninguna enfermedad
   4: {
-    intensa: [133, 161, 95],
-    normal: [60, 100, 90],
-    reposo: [60, 70, 90],
+    intensa: [141, 220, 95],
+    normal: [101, 140, 90],
+    reposo: [60, 100, 90],
     irregular_suenio: [60, 100, 95]
   },
 };
@@ -590,12 +590,18 @@ function formatearActividadesNormalReposo(result, es_por_hora) {
       if (isNaN(res_normal.por_dia[element.dia])) {
         res_normal.por_dia[element.dia] = 0; // Inicializa con 0 si es NaN
       }
+      if (isNaN(res_reposo.por_dia[element.dia])) {
+        res_reposo.por_dia[element.dia] = 0; // Inicializa con 0 si es NaN
+      }
       res_normal.por_dia[element.dia] += 1;
     } else if ((element.frecuencia >= rango_actividades[element.indice].reposo[0] && element.frecuencia <= rango_actividades[element.indice].reposo[1]) &&
       (element.porcentaje >= rango_actividades[element.indice].reposo[2])) {
       res_reposo.por_hora[element.hora] += 1;
       if (isNaN(res_reposo.por_dia[element.dia])) {
         res_reposo.por_dia[element.dia] = 0; // Inicializa con 0 si es NaN
+      }
+      if (isNaN(res_normal.por_dia[element.dia])) {
+        res_normal.por_dia[element.dia] = 0; // Inicializa con 0 si es NaN
       }
       res_reposo.por_dia[element.dia] += 1;
     }
